@@ -8,8 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- ตั้งค่า URL และรหัสผ่าน (แก้ไขในไฟล์นี้เท่านั้น) -->
-    <script src="config.js"></script>
     <style>
         body { font-family: 'Sarabun', sans-serif; background-color: #f8fafc; font-size: 14.5px !important; }
         input, select, textarea { font-size: 13.5px !important; padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
@@ -27,8 +25,10 @@
         .check-toggle:checked { background-color: #0d9488; border-color: #0d9488; }
         .check-toggle:checked::after { content: "\2713"; position: absolute; color: white; font-size: 11px; font-weight: bold; top: 50%; left: 50%; transform: translate(-50%, -50%); }
         .check-toggle:disabled { cursor: not-allowed; opacity: 0.6; }
+        /* checkbox "ไม่พบครุภัณฑ์" ที่ยังไม่ถูกกด (unchecked, สีแดงอ่อน) */
         .check-toggle-notfound { border-color: #fca5a5 !important; }
         .check-toggle-notfound:hover { border-color: #ef4444 !important; background-color: #fff1f2 !important; }
+        /* checkbox "ไม่พบครุภัณฑ์" ที่ถูกบันทึกแล้ว (checked, สีแดง) */
         .check-toggle-notfound-checked { background-color: #ef4444 !important; border-color: #ef4444 !important; }
         .check-toggle-notfound-checked:checked { background-color: #ef4444 !important; border-color: #ef4444 !important; }
     </style>
@@ -82,7 +82,6 @@
         </div>
 
         <div class="space-y-6">
-            <!-- ตารางสารบัญประเภทหลัก -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex flex-col h-auto min-h-[300px]">
                 <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
                     <h2 class="font-bold text-slate-800"><i class="fa-solid fa-list text-teal-600"></i> สารบัญประเภทหลัก</h2>
@@ -114,7 +113,6 @@
                 </div>
             </div>
 
-            <!-- ตารางทะเบียนรายชิ้น -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex flex-col h-auto min-h-[500px]">
                 <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
                     <h2 class="font-bold text-slate-800"><i class="fa-solid fa-clock-rotate-left text-indigo-600"></i> ทะเบียนรายชิ้น</h2>
@@ -131,11 +129,9 @@
                         <option value="">ทุกสถานที่ (ห้อง)</option>
                     </select>
                     <select id="filter-status" onchange="handleRealtimeFilter()" class="w-36 px-2 py-1.5 bg-white border border-slate-200 rounded-lg outline-none">
-                        <option value="">ทุกสถานะ</option>
-                        <option value="ใช้งาน">ใช้งาน</option>
-                        <option value="รอจำหน่าย">รอจำหน่าย</option>
-                        <option value="จำหน่ายแล้ว">จำหน่ายแล้ว</option>
+                        <option value="">ทุกสถานะ</option><option value="ใช้งาน">ใช้งาน</option><option value="รอจำหน่าย">รอจำหน่าย</option><option value="จำหน่ายแล้ว">จำหน่ายแล้ว</option>
                     </select>
+                    <!-- ✅ เพิ่ม option "ไม่พบครุภัณฑ์" ใน dropdown filter -->
                     <select id="filter-audit" onchange="handleRealtimeFilter()" class="w-44 px-2 py-1.5 bg-white border border-slate-200 rounded-lg outline-none text-teal-700 font-medium">
                         <option value="">ทุกการตรวจสอบ</option>
                         <option value="ตรวจสอบแล้ว">✅ ตรวจสอบแล้ว</option>
@@ -174,7 +170,6 @@
         </div>
     </main>
 
-    <!-- Modal: เพิ่มประเภทหลัก -->
     <div id="add-catalog-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[100] flex">
         <div class="bg-white rounded-2xl p-6 w-full max-w-lg relative shadow-2xl border-t-4 border-t-teal-500">
             <button onclick="toggleAddCatalogModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -195,7 +190,6 @@
         </div>
     </div>
 
-    <!-- Modal: เพิ่มรายชิ้น -->
     <div id="add-record-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[100] flex">
         <div class="bg-white rounded-2xl p-5 w-full max-w-lg relative shadow-2xl border-t-4 border-t-indigo-500 overflow-y-auto max-h-[90vh] custom-scrollbar">
             <button onclick="toggleAddRecordModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -254,7 +248,6 @@
         </div>
     </div>
 
-    <!-- Modal: แก้ไข -->
     <div id="edit-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[100] flex">
         <div class="bg-white rounded-2xl p-5 w-full max-w-lg relative shadow-2xl border-t-4 border-t-amber-400 overflow-y-auto max-h-[90vh] custom-scrollbar">
             <button onclick="toggleEditModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -330,14 +323,12 @@
         </div>
     </div>
 
-    <!-- Modal: Admin Login -->
     <div id="admin-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[110] flex">
         <div class="bg-white rounded-2xl p-6 w-full max-w-sm relative shadow-2xl">
             <button onclick="toggleAdminModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
             <h3 class="font-bold text-center mb-4"><i class="fa-solid fa-shield-halved text-indigo-600 text-4xl block mb-2"></i> เข้าสู่ระบบผู้ดูแล</h3>
             <input type="text" id="admin-user" placeholder="Username" class="w-full mb-3 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-400">
-            <input type="password" id="admin-pass" placeholder="Password" class="w-full mb-4 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-400"
-                   onkeydown="if(event.key==='Enter') processAdminLogin()">
+            <input type="password" id="admin-pass" placeholder="Password" class="w-full mb-4 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-400">
             <button onclick="processAdminLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-lg font-bold transition shadow-md">ล็อกอิน</button>
         </div>
     </div>
@@ -347,9 +338,8 @@
     </footer>
 
     <script>
-        // =====================================================================
-        // ข้อมูล OBEC หมวดหมู่มาตรฐาน สพฐ.
-        // =====================================================================
+        const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyo_8DGXbUhh5MWpA4WIbDVyoh30VKgmdehw_DxGflkbQn6amQTRxaadKcL3SlTruqo/exec";
+        
         const OBEC_CATEGORIES = [
           { title: "1. อาคาร", lifespan: 25, rate: "4%" },
           { title: "2. อาคารชั่วคราว / โรงเรือน", lifespan: 10, rate: "10%" },
@@ -367,215 +357,13 @@
           { title: "12. ครุภัณฑ์งานบ้านงานครัว (หมวด 12061200)", lifespan: 5, rate: "20%" }
         ];
 
-        // =====================================================================
-        // STATE
-        // =====================================================================
-        let STATE = { catalog: [], records: [], isAdmin: false };
-        let FILTERED_CATALOG = [];
-        let FILTERED_RECORDS = [];
-        let PAGINATION = { catalogPage: 1, catalogLimit: 20, recordsPage: 1, recordsLimit: 100 };
         let roomPINData = {};
         let unlockedRooms = new Set();
 
-        // =====================================================================
-        // UTILS
-        // =====================================================================
-
-        /** Escape HTML เพื่อป้องกัน XSS จากข้อมูลใน Google Sheets */
-        function esc(str) {
-            if (str === null || str === undefined) return '';
-            return String(str)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#x27;');
-        }
-
-        /**
-         * คำนวณ SHA-256 hash (ใช้สำหรับตรวจสอบรหัสผ่าน Admin)
-         * ใช้ Web Crypto API ที่มีในทุก browser สมัยใหม่
-         */
-        async function sha256(message) {
-            const msgBuffer = new TextEncoder().encode(message);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        function formatDateDisplay(dateString) {
-            if (!dateString) return "-";
-            try {
-                const d = new Date(dateString);
-                if (isNaN(d)) return dateString;
-                const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
-                return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear() + 543}`;
-            } catch (e) { return dateString; }
-        }
-
-        // =====================================================================
-        // STATUS BAR
-        // =====================================================================
-        function setStatus(mode) {
-            const d = document.getElementById("status-dot"), t = document.getElementById("status-text");
-            if (mode === 'loading') { d.className = "w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"; t.textContent = "กำลังซิงค์..."; }
-            if (mode === 'online')  { d.className = "w-2.5 h-2.5 rounded-full bg-green-500"; t.textContent = "ออนไลน์"; }
-            if (mode === 'error')   { d.className = "w-2.5 h-2.5 rounded-full bg-red-500"; t.textContent = "ขัดข้อง"; }
-        }
-
-        // =====================================================================
-        // MODAL TOGGLES
-        // =====================================================================
-        function toggleAddCatalogModal() { document.getElementById("add-catalog-modal").classList.toggle("hidden"); }
-        function toggleAddRecordModal()  { document.getElementById("add-record-modal").classList.toggle("hidden"); }
-        function toggleEditModal()       { document.getElementById("edit-modal").classList.toggle("hidden"); }
-        function toggleAdminModal()      { document.getElementById("admin-modal").classList.toggle("hidden"); }
-
-        // =====================================================================
-        // INIT
-        // =====================================================================
-        window.onload = () => { initDropdowns(); fetchDataFromSheet(); };
-
-        function initDropdowns() {
-            const sel = document.getElementById("cat-type-select");
-            OBEC_CATEGORIES.forEach(c => sel.innerHTML += `<option value="${esc(c.title)}">${esc(c.title)}</option>`);
-        }
-
-        function onCategoryChange() {
-            const val = document.getElementById("cat-type-select").value;
-            const match = OBEC_CATEGORIES.find(c => c.title === val);
-            if (match) {
-                document.getElementById("cat-lifespan").value = match.lifespan;
-                document.getElementById("cat-depreciation").value = match.rate;
-            }
-        }
-
-        // =====================================================================
-        // API CALLS
-        // =====================================================================
-        async function testConnection() {
-            setStatus('loading');
-            try {
-                const res = await fetch(APP_SCRIPT_URL + "?action=test");
-                const data = await res.json();
-                if (data.status === 'success') {
-                    Swal.fire("สำเร็จ", "เชื่อมต่อ Google Sheet ได้สมบูรณ์", "success");
-                    setStatus('online');
-                } else {
-                    Swal.fire("ล้มเหลว", data.message || "ตอบกลับผิดปกติ", "error");
-                    setStatus('error');
-                }
-            } catch (e) {
-                Swal.fire("ล้มเหลว", "การเชื่อมต่อขัดข้อง", "error");
-                setStatus('error');
-            }
-        }
-
-        async function fetchDataFromSheet() {
-            setStatus('loading');
-            try {
-                const res = await fetch(APP_SCRIPT_URL + "?action=getData");
-                const data = await res.json();
-                if (data.status === 'success') {
-                    STATE.catalog = (data.catalog || []).sort((a, b) => parseInt(a['รหัสครุภัณฑ์']) - parseInt(b['รหัสครุภัณฑ์']));
-                    STATE.records = data.records || [];
-                    roomPINData = data.roomPINs || {};
-                    document.getElementById("last-sync-time").textContent = new Date().toLocaleTimeString('th-TH');
-                    FILTERED_CATALOG = [...STATE.catalog];
-                    FILTERED_RECORDS = [...STATE.records];
-                    PAGINATION.catalogPage = 1;
-                    PAGINATION.recordsPage = 1;
-                    renderAll();
-                    setStatus('online');
-                } else {
-                    Swal.fire("ผิดพลาด", data.message || "โหลดข้อมูลไม่สำเร็จ", "error");
-                    setStatus('error');
-                }
-            } catch (e) {
-                console.error("fetchDataFromSheet error:", e);
-                setStatus('error');
-            }
-        }
-
-        /**
-         * ส่งข้อมูลไปยัง GAS ผ่าน POST
-         * GAS ต้องรองรับ CORS (เปิด Access: Anyone) จึงจะอ่าน response ได้
-         * หากยัง no-cors อยู่ ให้เปลี่ยน GAS ให้ return header ด้วย setXFrameOptionsMode(ALLOWALL)
-         */
-        async function postData(payload) {
-            setStatus('loading');
-            try {
-                const res = await fetch(APP_SCRIPT_URL, {
-                    method: "POST",
-                    // ✅ ลบ mode: "no-cors" ออกเพื่อให้อ่าน response ได้
-                    // GAS Web App ที่ตั้งค่า "Anyone" จะรองรับ CORS โดยอัตโนมัติ
-                    headers: { "Content-Type": "text/plain" }, // ใช้ text/plain หลีกเลี่ยง preflight
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                if (data.status !== 'success') {
-                    console.warn("postData warning:", data.message);
-                }
-                if (payload.action !== "updateCheckStatus") {
-                    setTimeout(() => fetchDataFromSheet(), 2000);
-                } else {
-                    setStatus('online');
-                }
-            } catch (e) {
-                console.error("postData error:", e);
-                // Fallback: ถ้า CORS ยังไม่ผ่าน ลองแบบ no-cors (ส่งได้ แต่ไม่รู้ผล)
-                try {
-                    await fetch(APP_SCRIPT_URL, {
-                        method: "POST",
-                        mode: "no-cors",
-                        headers: { "Content-Type": "text/plain" },
-                        body: JSON.stringify(payload)
-                    });
-                    if (payload.action !== "updateCheckStatus") {
-                        setTimeout(() => fetchDataFromSheet(), 2500);
-                    } else {
-                        setStatus('online');
-                    }
-                } catch (e2) {
-                    console.error("postData fallback error:", e2);
-                    setStatus('error');
-                }
-            }
-        }
-
-        // =====================================================================
-        // ADMIN LOGIN (ใช้ SHA-256 hash แทนรหัสผ่านตรงๆ)
-        // =====================================================================
-        async function processAdminLogin() {
-            const username = document.getElementById("admin-user").value.trim();
-            const password = document.getElementById("admin-pass").value;
-            
-            if (!username || !password) {
-                return Swal.fire("แจ้งเตือน", "กรุณากรอก Username และ Password", "warning");
-            }
-
-            const hash = await sha256(password);
-
-            if (username === ADMIN_USERNAME && hash === ADMIN_PASSWORD_HASH) {
-                STATE.isAdmin = true;
-                document.getElementById("admin-btn").className = "bg-green-700 border border-green-600 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-1.5 shadow-md transition-all text-white";
-                document.getElementById("admin-btn-text").textContent = "แอดมินออนไลน์";
-                document.getElementById("admin-action-buttons").classList.remove("hidden");
-                document.getElementById("admin-pass").value = ""; // ล้างรหัสผ่านออกจาก DOM
-                toggleAdminModal();
-                Swal.fire("สำเร็จ", "ปลดล็อกฟังก์ชันเพิ่ม/แก้ไข/ลบ เรียบร้อย", "success");
-            } else {
-                Swal.fire("ผิดพลาด", "Username หรือรหัสผ่านไม่ถูกต้อง", "error");
-            }
-        }
-
-        // =====================================================================
-        // ROOM PIN
-        // =====================================================================
         function showPublicPINs() {
             let htmlContent = `
               <div class="mb-3 text-left">
-                  <input type="text" id="search-pin" onkeyup="filterPINTable()" placeholder="🔍 ค้นหาชื่อห้อง หรือ สถานที่..."
+                  <input type="text" id="search-pin" onkeyup="filterPINTable()" placeholder="🔍 ค้นหาชื่อห้อง หรือ สถานที่..." 
                          class="w-full px-3 py-2 border border-slate-300 rounded-lg outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all text-sm">
               </div>
               <div style="max-height: 350px; overflow-y: auto;" class="custom-scrollbar border border-slate-200 rounded-lg">
@@ -588,30 +376,31 @@
                     </thead>
                     <tbody>`;
             for (const [roomName, pinCode] of Object.entries(roomPINData)) {
-                htmlContent += `<tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors pin-row">
-                      <td class="p-2.5 pin-name text-slate-700">${esc(roomName)}</td>
-                      <td class="p-2.5"><b class="text-emerald-600 tracking-widest">${esc(pinCode)}</b></td>
+              htmlContent += `<tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors pin-row">
+                      <td class="p-2.5 pin-name text-slate-700">${roomName}</td>
+                      <td class="p-2.5"><b class="text-emerald-600 tracking-widest">${pinCode}</b></td>
                   </tr>`;
             }
             htmlContent += `</tbody></table></div>`;
             Swal.fire({
-                title: '🔑 รหัส Room PIN สาธารณะ',
-                html: htmlContent,
-                icon: 'info',
-                confirmButtonText: 'ปิดหน้าต่าง',
-                confirmButtonColor: '#0d9488',
-                width: '500px'
+              title: '🔑 รหัส Room PIN สาธารณะ',
+              html: htmlContent,
+              icon: 'info',
+              confirmButtonText: 'ปิดหน้าต่าง',
+              confirmButtonColor: '#0d9488',
+              width: '500px'
             });
         }
 
         function filterPINTable() {
-            const input = document.getElementById("search-pin").value.toLowerCase();
+            let input = document.getElementById("search-pin").value.toLowerCase();
             document.querySelectorAll(".pin-row").forEach(row => {
-                const roomName = row.querySelector(".pin-name").textContent.toLowerCase();
+                let roomName = row.querySelector(".pin-name").textContent.toLowerCase();
                 row.style.display = roomName.includes(input) ? "" : "none";
             });
         }
 
+        // ตรวจสอบ Room PIN ก่อนดำเนินการใดๆ
         function checkRoomPinBeforeAction(roomName, switchElement, successCallback) {
             if (!roomPINData[roomName]) { successCallback(); return; }
             if (unlockedRooms.has(roomName)) { successCallback(); return; }
@@ -635,6 +424,7 @@
                     Swal.fire({ icon: 'success', title: 'ปลดล็อกสำเร็จ!', text: 'คุณสามารถแก้ไขรายการอื่นๆ ในสถานที่นี้ได้เลย', timer: 1500, showConfirmButton: false });
                     successCallback();
                 } else {
+                    // กด cancel: คืนค่า checkbox ถ้ามี
                     if (switchElement && typeof switchElement.checked !== 'undefined') {
                         switchElement.checked = !switchElement.checked;
                     }
@@ -642,20 +432,24 @@
             });
         }
 
+        // เรียกตรวจสอบ PIN ก่อน (checkbox ตรวจสอบ)
         function handleCheckboxClick(checkboxElement, serial, roomLocation) {
-            checkRoomPinBeforeAction(roomLocation, checkboxElement, function () {
+            checkRoomPinBeforeAction(roomLocation, checkboxElement, function() {
                 toggleAuditCheck(serial, checkboxElement.checked);
             });
         }
 
+        // ✅ ฟังก์ชันใหม่: จัดการกดปุ่ม "ไม่พบครุภัณฑ์"
         function handleNotFoundClick(serial, roomLocation) {
-            checkRoomPinBeforeAction(roomLocation, {}, function () {
+            checkRoomPinBeforeAction(roomLocation, {}, function() {
                 markAsNotFound(serial);
             });
         }
 
+        // ✅ ฟังก์ชันใหม่: บันทึกสถานะ "ไม่พบครุภัณฑ์"
         function markAsNotFound(serial) {
             const serialStr = String(serial).trim();
+            // หา wrapper div ที่ครอบ checkbox + แถว แล้วแทนที่ด้วย checkbox สีแดงที่ถูก tick
             const chkEl = document.getElementById('chk-' + serialStr);
             if (chkEl) {
                 const wrapper = chkEl.closest('div.flex');
@@ -666,20 +460,49 @@
                     </label>`;
                 }
             }
+            // อัปเดต STATE
             const idx = STATE.records.findIndex(x => String(x['เลขครุภัณฑ์']).trim() === serialStr);
             if (idx !== -1) STATE.records[idx]['การตรวจสอบ'] = 'ไม่พบครุภัณฑ์';
+            // บันทึกลง Google Sheets
             postData({ action: "updateCheckStatus", serialNumber: serialStr, checkStatus: 'ไม่พบครุภัณฑ์' });
         }
 
-        // =====================================================================
-        // SUGGEST NEXT SERIAL
-        // =====================================================================
+        let STATE = { catalog: [], records: [], isAdmin: false };
+        let FILTERED_CATALOG = [];
+        let FILTERED_RECORDS = [];
+        let PAGINATION = { catalogPage: 1, catalogLimit: 20, recordsPage: 1, recordsLimit: 100 };
+
+        window.onload = () => { initDropdowns(); fetchDataFromSheet(); };
+
+        function toggleAddCatalogModal() { document.getElementById("add-catalog-modal").classList.toggle("hidden"); }
+        function toggleAddRecordModal() { document.getElementById("add-record-modal").classList.toggle("hidden"); }
+        function toggleEditModal() { document.getElementById("edit-modal").classList.toggle("hidden"); }
+        function toggleAdminModal() { document.getElementById("admin-modal").classList.toggle("hidden"); }
+
+        function initDropdowns() {
+            const sel = document.getElementById("cat-type-select");
+            OBEC_CATEGORIES.forEach(c => sel.innerHTML += `<option value="${c.title}">${c.title}</option>`);
+        }
+
+        function onCategoryChange() {
+            const val = document.getElementById("cat-type-select").value;
+            const match = OBEC_CATEGORIES.find(c => c.title === val);
+            if(match) {
+                document.getElementById("cat-lifespan").value = match.lifespan;
+                document.getElementById("cat-depreciation").value = match.rate;
+            }
+        }
+
         function suggestNextSerial() {
             const parentCode = document.getElementById("rec-parent-select").value;
             if (!parentCode) return;
+
+            // หา serial ทั้งหมดที่อยู่ในหมวดนี้
             const related = STATE.records.filter(r =>
                 String(r['รหัสครุภัณฑ์หลัก']).trim() === String(parentCode).trim()
             );
+
+            // หาเลขลำดับสูงสุด (ส่วนที่ 2 ของ serial เช่น 192/5/67 → 5)
             let maxSeq = 0;
             related.forEach(r => {
                 const parts = String(r['เลขครุภัณฑ์']).split('/');
@@ -688,32 +511,85 @@
                     if (!isNaN(seq) && seq > maxSeq) maxSeq = seq;
                 }
             });
+
             const nextSeq = maxSeq + 1;
+            // ปีพุทธศักราชย่อ 2 หลัก (เช่น 2568 → 68)
             const yearBE = (new Date().getFullYear() + 543) % 100;
             const suggested = `${parentCode}/${nextSeq}/${yearBE}`;
+
             const serialInput = document.getElementById("rec-serial");
             serialInput.value = suggested;
             serialInput.style.borderColor = "#6366f1";
             serialInput.style.boxShadow = "0 0 0 3px rgba(99,102,241,0.15)";
+
             const hint = document.getElementById("serial-hint");
-            if (hint) hint.textContent = `✨ แนะนำจากรายการที่มีอยู่ ${related.length} ชิ้น (แก้ไขได้)`;
+            if (hint) {
+                hint.textContent = `✨ แนะนำจากรายการที่มีอยู่ ${related.length} ชิ้น (แก้ไขได้)`;
+            }
         }
 
-        // =====================================================================
-        // RENDER
-        // =====================================================================
+        function setStatus(mode) {
+            const d = document.getElementById("status-dot"), t = document.getElementById("status-text");
+            if(mode === 'loading') { d.className="w-3 h-3 rounded-full bg-amber-500 animate-pulse"; t.textContent="กำลังซิงค์..."; }
+            if(mode === 'online') { d.className="w-3 h-3 rounded-full bg-green-500"; t.textContent="ออนไลน์"; }
+            if(mode === 'error') { d.className="w-3 h-3 rounded-full bg-red-500"; t.textContent="ขัดข้อง"; }
+        }
+
+        async function testConnection() {
+            setStatus('loading');
+            try {
+                const res = await fetch('/api/links');
+                const data = await res.json();
+                if(data.status === 'success') { Swal.fire("สำเร็จ", "เชื่อมต่อ Google Sheet ได้สมบูรณ์", "success"); setStatus('online'); }
+            } catch(e) { Swal.fire("ล้มเหลว", "การเชื่อมต่อขัดข้อง", "error"); setStatus('error'); }
+        }
+
+        async function fetchDataFromSheet() {
+            setStatus('loading');
+            try {
+                const res = await fetch('/api/links');
+                const data = await res.json();
+                if(data.status === 'success') {
+                    STATE.catalog = (data.catalog || []).sort((a, b) => parseInt(a['รหัสครุภัณฑ์']) - parseInt(b['รหัสครุภัณฑ์']));
+                    STATE.records = data.records || [];
+                    roomPINData = data.roomPINs || {};
+                    document.getElementById("last-sync-time").textContent = new Date().toLocaleTimeString('th-TH');
+                    FILTERED_CATALOG = [...STATE.catalog];
+                    FILTERED_RECORDS = [...STATE.records];
+                    PAGINATION.catalogPage = 1;
+                    PAGINATION.recordsPage = 1;
+                    renderAll();
+                    setStatus('online');
+                }
+            } catch(e) { setStatus('error'); }
+        }
+
+        async function postData(payload) {
+            setStatus('loading');
+            try {
+                await fetch('/api/links', {
+                    method: "POST", mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                if(payload.action !== "updateCheckStatus") {
+                    setTimeout(() => fetchDataFromSheet(), 2000);
+                } else { setStatus('online'); }
+            } catch(e) { console.error(e); setStatus('error'); }
+        }
+
         function renderAll() { updateFilterDropdowns(); renderCatalog(); renderRecords(); }
 
         function updateFilterDropdowns() {
             let htmlForm = '<option value="" disabled selected>-- เลือกครุภัณฑ์หลัก --</option>';
-            STATE.catalog.forEach(c => htmlForm += `<option value="${esc(c['รหัสครุภัณฑ์'])}">[${esc(c['รหัสครุภัณฑ์'])}] ${esc(c['ชื่อครุภัณฑ์'])}</option>`);
+            STATE.catalog.forEach(c => htmlForm += `<option value="${c['รหัสครุภัณฑ์']}">[${c['รหัสครุภัณฑ์']}] ${c['ชื่อครุภัณฑ์']}</option>`);
             document.getElementById("rec-parent-select").innerHTML = htmlForm;
             document.getElementById("edit-parent").innerHTML = htmlForm;
 
             const parentSelect = document.getElementById("filter-parent");
             const currParent = parentSelect.value;
             let htmlParent = '<option value="">ทุกครุภัณฑ์หลัก</option>';
-            STATE.catalog.forEach(c => htmlParent += `<option value="${esc(c['รหัสครุภัณฑ์'])}">${esc(c['ชื่อครุภัณฑ์'])}</option>`);
+            STATE.catalog.forEach(c => htmlParent += `<option value="${c['รหัสครุภัณฑ์']}">${c['ชื่อครุภัณฑ์']}</option>`);
             parentSelect.innerHTML = htmlParent;
             parentSelect.value = currParent;
 
@@ -721,7 +597,7 @@
             const currentVal = locSelect.value;
             const locations = [...new Set(STATE.records.map(r => String(r['สถานที่เก็บ']).trim()))].filter(Boolean);
             let htmlLoc = '<option value="">ทุกสถานที่ (ห้อง)</option>';
-            locations.forEach(l => htmlLoc += `<option value="${esc(l)}">${esc(l)}</option>`);
+            locations.forEach(l => htmlLoc += `<option value="${l}">${l}</option>`);
             locSelect.innerHTML = htmlLoc;
             locSelect.value = currentVal;
         }
@@ -740,14 +616,14 @@
                     String(r['รหัสครุภัณฑ์หลัก']).trim() === String(c['รหัสครุภัณฑ์']).trim() &&
                     String(r['สถานะ']).trim() === 'ใช้งาน').length;
                 tb.innerHTML += `<tr class="hover:bg-slate-50 border-b border-slate-100">
-                        <td class="p-2.5 font-bold text-slate-700">${esc(c['รหัสครุภัณฑ์'])}</td>
-                        <td class="p-2.5 font-medium text-slate-900">${esc(c['ชื่อครุภัณฑ์'])}</td>
-                        <td class="p-2.5 text-slate-600">${esc(c['ประเภทครุภัณฑ์']) || '-'}</td>
-                        <td class="p-2.5 text-center font-medium">${esc(c['อายุการใช้งาน'])} ปี</td>
+                        <td class="p-2.5 font-bold text-slate-700">${c['รหัสครุภัณฑ์']}</td>
+                        <td class="p-2.5 font-medium text-slate-900">${c['ชื่อครุภัณฑ์']}</td>
+                        <td class="p-2.5 text-slate-600">${c['ประเภทครุภัณฑ์'] || '-'}</td>
+                        <td class="p-2.5 text-center font-medium">${c['อายุการใช้งาน']} ปี</td>
                         <td class="p-2.5 text-center text-teal-600 font-bold">${activeCount}</td>
-                        <td class="p-2.5 text-slate-600">${esc(c['หน่วยนับ']) || 'ชิ้น'}</td>
+                        <td class="p-2.5 text-slate-600">${c['หน่วยนับ'] || 'ชิ้น'}</td>
                         <td class="p-2.5 text-center">
-                            <button onclick="delCatalog('${esc(c['รหัสครุภัณฑ์'])}')" class="text-red-500 hover:text-red-700 p-1.5 bg-red-50 rounded transition" title="ลบสารบัญ"><i class="fa-solid fa-trash"></i></button>
+                            <button onclick="delCatalog('${c['รหัสครุภัณฑ์']}')" class="text-red-500 hover:text-red-700 p-1.5 bg-red-50 rounded transition" title="ลบสารบัญ"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     </tr>`;
             });
@@ -781,26 +657,28 @@
                 const parent = STATE.catalog.find(c => String(c['รหัสครุภัณฑ์']).trim() === String(r['รหัสครุภัณฑ์หลัก']).trim());
                 const parentCode = r['รหัสครุภัณฑ์หลัก'];
                 const parentName = parent ? parent['ชื่อครุภัณฑ์'] : '-';
-                const parentDisplay = `<div><span class="font-bold text-slate-700 text-xs">[${esc(parentCode)}]</span><br><span class="text-slate-500 truncate max-w-[150px] block" title="${esc(parentName)}">${esc(parentName)}</span></div>`;
+                const parentDisplay = `<div><span class="font-bold text-slate-700 text-xs">[${parentCode}]</span><br><span class="text-slate-500 truncate max-w-[150px] block" title="${parentName}">${parentName}</span></div>`;
                 const itemName = r['ชื่อรายการ'] || parentName;
 
                 let badgeClass = "bg-slate-200 text-slate-700";
                 const st = String(r['สถานะ']).trim();
-                if (st === 'ใช้งาน')      badgeClass = "bg-green-100 text-green-700 border border-green-200";
-                if (st === 'รอจำหน่าย')  badgeClass = "bg-amber-100 text-amber-700 border border-amber-200";
-                if (st === 'จำหน่ายแล้ว') badgeClass = "bg-red-100 text-red-700 border border-red-200";
+                if(st === 'ใช้งาน') badgeClass = "bg-green-100 text-green-700 border border-green-200";
+                if(st === 'รอจำหน่าย') badgeClass = "bg-amber-100 text-amber-700 border border-amber-200";
+                if(st === 'จำหน่ายแล้ว') badgeClass = "bg-red-100 text-red-700 border border-red-200";
 
                 const displaySerial = String(r['เลขครุภัณฑ์']).trim();
-                // ใช้ data-attribute แทน inline event string เพื่อความปลอดภัย
-                const safeSerial   = displaySerial.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+                const safeSerial = displaySerial.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
                 const safeLocation = (String(r['สถานที่เก็บ'] || '')).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-
                 const sellDateInfo = (st === 'จำหน่ายแล้ว' && r['วันที่จำหน่าย']) ?
                     `<div class="text-[11px] text-red-600 font-bold mt-1">จำหน่าย: ${formatDateDisplay(r['วันที่จำหน่าย'])}</div>` : '';
 
-                // ช่องตรวจสอบ
+                // ============================================================
+                // ✅ โค้ดส่วนแสดงผลช่องตรวจสอบ (แก้ไข V6.1 - ใช้ st โดยตรง)
+                // ============================================================
                 let checkColumnHTML = '';
+
                 if (st === 'จำหน่ายแล้ว') {
+                    // 1. ถ้ารายการนี้ "จำหน่ายแล้ว" ให้แสดงป้ายสีเทา ไม่มีช่องตรวจสอบ
                     checkColumnHTML = `
                         <div class="flex justify-center">
                             <span class="inline-block px-3 py-1 bg-gray-200 text-gray-600 rounded-full text-[11px] font-bold border border-gray-300 shadow-sm">
@@ -808,23 +686,29 @@
                             </span>
                         </div>`;
                 } else {
+                    // 2. ถ้าไม่ใช่ "จำหน่ายแล้ว" ให้มาเช็คการตรวจสอบ
+                    // ดึงค่าการตรวจสอบ (ถ้าไม่มีใช้คำว่า 'ตรวจสอบแล้ว')
                     const checkStatus = (r['การตรวจสอบ']) ? String(r['การตรวจสอบ']).trim() : 'ตรวจสอบแล้ว';
+
                     if (checkStatus === 'ไม่พบครุภัณฑ์') {
+                        // 2.1 ถ้าสถานะการตรวจสอบคือ "ไม่พบครุภัณฑ์"
                         checkColumnHTML = `
                             <label class="flex items-center justify-center gap-1.5">
                                 <input type="checkbox" class="check-toggle check-toggle-notfound-checked" checked disabled>
                                 <span class="font-bold text-[11px] text-red-600">ไม่พบครุภัณฑ์</span>
                             </label>`;
                     } else {
+                        // 2.2 กรณีปกติ ให้แสดงปุ่มติ๊กถูก (รอตรวจสอบ/ตรวจสอบแล้ว) และปุ่มกากบาท (ไม่พบครุภัณฑ์)
                         const isChecked = (checkStatus === 'ตรวจสอบแล้ว' || checkStatus === 'มี');
                         const displayStatus = isChecked ? 'ตรวจสอบแล้ว' : 'รอตรวจสอบ';
                         const checkColor = isChecked ? 'text-teal-600' : 'text-red-500';
+                        
                         checkColumnHTML = `
                             <div class="flex flex-col items-center gap-1.5">
                                 <label class="flex items-center justify-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity">
-                                    <input type="checkbox" id="chk-${esc(displaySerial)}" class="check-toggle"
+                                    <input type="checkbox" id="chk-${displaySerial}" class="check-toggle"
                                            onchange="handleCheckboxClick(this, '${safeSerial}', '${safeLocation}')" ${isChecked ? 'checked' : ''}>
-                                    <span id="lbl-${esc(displaySerial)}" class="font-bold text-[11px] ${checkColor}">${displayStatus}</span>
+                                    <span id="lbl-${displaySerial}" class="font-bold text-[11px] ${checkColor}">${displayStatus}</span>
                                 </label>
                                 <label class="flex items-center justify-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity" onclick="handleNotFoundClick('${safeSerial}', '${safeLocation}')">
                                     <input type="checkbox" class="check-toggle check-toggle-notfound" style="border-color:#fca5a5;" readonly>
@@ -833,14 +717,16 @@
                             </div>`;
                     }
                 }
+                // ============================================================
+                // ============================================================
 
                 tb.innerHTML += `<tr class="hover:bg-slate-50 border-b border-slate-100">
                         <td class="p-2.5 align-middle">${parentDisplay}</td>
-                        <td class="p-2.5 font-bold text-indigo-900 whitespace-nowrap align-middle">${esc(displaySerial)}</td>
-                        <td class="p-2.5 truncate max-w-[200px] align-middle font-medium text-slate-800" title="${esc(itemName)}">${esc(itemName)}</td>
-                        <td class="p-2.5 truncate max-w-[130px] align-middle text-slate-700">${esc(r['สถานที่เก็บ'])}</td>
+                        <td class="p-2.5 font-bold text-indigo-900 whitespace-nowrap align-middle">${displaySerial}</td>
+                        <td class="p-2.5 truncate max-w-[200px] align-middle font-medium text-slate-800" title="${itemName}">${itemName}</td>
+                        <td class="p-2.5 truncate max-w-[130px] align-middle text-slate-700">${r['สถานที่เก็บ']}</td>
                         <td class="p-2.5 text-center align-middle">
-                            <span class="px-2 py-1 text-[11px] rounded-md font-bold whitespace-nowrap ${badgeClass}">${esc(st)}</span>
+                            <span class="px-2 py-1 text-[11px] rounded-md font-bold whitespace-nowrap ${badgeClass}">${st}</span>
                             ${sellDateInfo}
                         </td>
                         <td class="p-2.5 text-center align-middle border-l border-slate-100 print-hide">
@@ -863,9 +749,6 @@
 
         function changeRecordsPage(offset) { PAGINATION.recordsPage += offset; renderRecords(); }
 
-        // =====================================================================
-        // FILTER
-        // =====================================================================
         function handleRealtimeFilter() {
             const q = document.getElementById("filter-query").value.toLowerCase();
             const pCode = document.getElementById("filter-parent").value;
@@ -887,6 +770,7 @@
                 const matchS = s === "" || itemStatus === s;
                 const matchL = l === "" || String(r['สถานที่เก็บ']).trim() === l;
 
+                // ✅ เงื่อนไข filter รองรับ "ไม่พบครุภัณฑ์"
                 let matchA = true;
                 if (a !== "") {
                     if (itemStatus === 'จำหน่ายแล้ว') {
@@ -914,16 +798,13 @@
             document.getElementById("filter-parent").value = "";
             document.getElementById("filter-status").value = "";
             document.getElementById("filter-location").value = "";
-            if (document.getElementById("filter-audit")) document.getElementById("filter-audit").value = "";
+            if(document.getElementById("filter-audit")) document.getElementById("filter-audit").value = "";
             handleRealtimeFilter();
         }
 
-        // =====================================================================
-        // CRUD HANDLERS
-        // =====================================================================
         function handleCatalogSubmit(e) {
             e.preventDefault();
-            if (!STATE.isAdmin) return Swal.fire("แจ้งเตือน", "กรุณาล็อกอินก่อนบันทึกข้อมูล", "warning");
+            if(!STATE.isAdmin) return Swal.fire("แจ้งเตือน", "กรุณาล็อกอินก่อนบันทึกข้อมูล", "warning");
             const payload = {
                 action: "addCatalog",
                 'รหัสครุภัณฑ์': document.getElementById("cat-code").value.trim(),
@@ -933,7 +814,7 @@
                 'จำนวนคงเหลือ': 0,
                 'หน่วยนับ': document.getElementById("cat-unit").value.trim()
             };
-            if (STATE.catalog.find(c => String(c['รหัสครุภัณฑ์']).trim() === payload['รหัสครุภัณฑ์'])) {
+            if(STATE.catalog.find(c => String(c['รหัสครุภัณฑ์']).trim() === payload['รหัสครุภัณฑ์'])) {
                 return Swal.fire("ผิดพลาด", "รหัสหลักนี้มีอยู่ในระบบแล้ว", "error");
             }
             STATE.catalog.unshift(payload);
@@ -945,9 +826,9 @@
 
         function handleRecordSubmit(e) {
             e.preventDefault();
-            if (!STATE.isAdmin) return Swal.fire("แจ้งเตือน", "กรุณาล็อกอินก่อนบันทึกข้อมูล", "warning");
+            if(!STATE.isAdmin) return Swal.fire("แจ้งเตือน", "กรุณาล็อกอินก่อนบันทึกข้อมูล", "warning");
             const newSerial = document.getElementById("rec-serial").value.trim();
-            if (STATE.records.some(r => String(r['เลขครุภัณฑ์']).trim() === newSerial)) {
+            if(STATE.records.some(r => String(r['เลขครุภัณฑ์']).trim() === newSerial)) {
                 return Swal.fire("เลขครุภัณฑ์ซ้ำ!", `เลขครุภัณฑ์ [${newSerial}] ถูกใช้งานในระบบไปแล้ว ห้ามบันทึกซ้ำกัน`, "error");
             }
             const payload = {
@@ -970,6 +851,7 @@
             STATE.records.unshift(payload);
             FILTERED_RECORDS = [...STATE.records];
             renderAll(); postData(payload); e.target.reset();
+            // ล้าง hint และ style ของช่อง serial
             const serialInput = document.getElementById("rec-serial");
             serialInput.style.borderColor = "";
             serialInput.style.boxShadow = "";
@@ -980,17 +862,17 @@
         }
 
         function openEditModal(serial) {
-            if (!STATE.isAdmin) return Swal.fire("แจ้งเตือน", "กรุณาล็อกอินแอดมินก่อน", "warning");
+            if(!STATE.isAdmin) return Swal.fire("แจ้งเตือน", "กรุณาล็อกอินแอดมินก่อน", "warning");
             const rawSerial = String(serial).trim();
             const r = STATE.records.find(x => String(x['เลขครุภัณฑ์']).trim() === rawSerial);
-            if (!r) return;
+            if(!r) return;
             document.getElementById("edit-old-serial").value = rawSerial;
             document.getElementById("edit-parent").value = r['รหัสครุภัณฑ์หลัก'];
             document.getElementById("edit-name").value = r['ชื่อรายการ'] || '';
             document.getElementById("edit-desc").value = r['ลักษณะขนาด'] || '';
             document.getElementById("edit-check-status").value = r['การตรวจสอบ'] || 'ตรวจสอบแล้ว';
             try { const d = new Date(r['วันที่ได้มา']); document.getElementById("edit-date").value = d.toISOString().split('T')[0]; }
-            catch (e) { document.getElementById("edit-date").value = r['วันที่ได้มา']; }
+            catch(e) { document.getElementById("edit-date").value = r['วันที่ได้มา']; }
             document.getElementById("edit-price").value = r['ราคาต่อหน่วย'];
             document.getElementById("edit-serial").value = rawSerial;
             document.getElementById("edit-location").value = r['สถานที่เก็บ'];
@@ -1001,7 +883,7 @@
             document.getElementById("edit-ref-doc").value = r['เอกสารอ้างอิง'] || '';
             if (r['วันที่จำหน่าย']) {
                 try { const d2 = new Date(r['วันที่จำหน่าย']); document.getElementById("edit-disposal-date").value = d2.toISOString().split('T')[0]; }
-                catch (e) { document.getElementById("edit-disposal-date").value = r['วันที่จำหน่าย']; }
+                catch(e) { document.getElementById("edit-disposal-date").value = r['วันที่จำหน่าย']; }
             } else { document.getElementById("edit-disposal-date").value = ""; }
             handleEditStatusChange();
             toggleEditModal();
@@ -1013,7 +895,7 @@
             btn.disabled = true; btn.textContent = "กำลังบันทึก...";
             const oldSerial = String(document.getElementById("edit-old-serial").value).trim();
             const newSerial = String(document.getElementById("edit-serial").value).trim();
-            if (newSerial !== oldSerial && STATE.records.some(r => String(r['เลขครุภัณฑ์']).trim() === newSerial)) {
+            if(newSerial !== oldSerial && STATE.records.some(r => String(r['เลขครุภัณฑ์']).trim() === newSerial)) {
                 btn.disabled = false; btn.textContent = "บันทึกการแก้ไข";
                 return Swal.fire("เลขครุภัณฑ์ซ้ำ!", `ไม่สามารถเปลี่ยนเป็นเลข [${newSerial}] ได้ เนื่องจากซ้ำกับข้อมูลอื่นในระบบ`, "error");
             }
@@ -1043,62 +925,12 @@
             setTimeout(() => { btn.disabled = false; btn.textContent = "บันทึกการแก้ไข"; }, 1000);
         }
 
-        function handleEditStatusChange() {
-            const status = document.getElementById("edit-status").value;
-            const disposalBox = document.getElementById("edit-disposal-container");
-            if (status === 'จำหน่ายแล้ว') { disposalBox.classList.remove("hidden"); }
-            else { disposalBox.classList.add("hidden"); document.getElementById("edit-disposal-date").value = ""; }
-        }
-
-        function delCatalog(code) {
-            if (!STATE.isAdmin) return Swal.fire("แจ้งเตือน", "กรุณาล็อกอินแอดมินก่อน", "warning");
-            Swal.fire({ title: "ยืนยันการลบสารบัญ?", text: "ลบหมวดหมู่นี้แล้วจะไม่สามารถย้อนกลับได้", icon: "warning", showCancelButton: true }).then(r => {
-                if (r.isConfirmed) {
-                    STATE.catalog = STATE.catalog.filter(c => String(c['รหัสครุภัณฑ์']).trim() !== String(code).trim());
-                    FILTERED_CATALOG = [...STATE.catalog];
-                    renderAll();
-                    postData({ action: "deleteCatalog", code: code });
-                }
-            });
-        }
-
-        function delRecord(serial) {
-            if (!STATE.isAdmin) return Swal.fire("แจ้งเตือน", "กรุณาล็อกอินแอดมินก่อน", "warning");
-            const rawSerial = String(serial).trim();
-            Swal.fire({ title: "ลบครุภัณฑ์ชิ้นนี้?", text: `ต้องการลบเลขครุภัณฑ์ ${rawSerial} ใช่หรือไม่?`, icon: "warning", showCancelButton: true }).then(r => {
-                if (r.isConfirmed) {
-                    STATE.records = STATE.records.filter(c => String(c['เลขครุภัณฑ์']).trim() !== rawSerial);
-                    FILTERED_RECORDS = [...STATE.records];
-                    renderAll();
-                    postData({ action: "deleteRecord", serialNumber: rawSerial });
-                }
-            });
-        }
-
-        // =====================================================================
-        // AUDIT CHECK
-        // =====================================================================
-        function toggleAuditCheck(serial, isChecked) {
-            const newStatus = isChecked ? 'ตรวจสอบแล้ว' : 'รอตรวจสอบ';
-            const lbl = document.getElementById(`lbl-${serial}`);
-            if (lbl) {
-                lbl.textContent = newStatus;
-                lbl.className = `font-bold text-[11px] ${isChecked ? 'text-teal-600' : 'text-red-500'}`;
-            }
-            const idxBase = STATE.records.findIndex(x => String(x['เลขครุภัณฑ์']).trim() === String(serial).trim());
-            if (idxBase !== -1) STATE.records[idxBase]['การตรวจสอบ'] = newStatus;
-            postData({ action: "updateCheckStatus", serialNumber: String(serial).trim(), checkStatus: newStatus });
-        }
-
-        // =====================================================================
-        // DEPRECIATION
-        // =====================================================================
         function viewDepreciation(serial) {
             const rawSerial = String(serial).trim();
             const r = STATE.records.find(x => String(x['เลขครุภัณฑ์']).trim() === rawSerial);
-            if (!r) return;
+            if(!r) return;
             const p = STATE.catalog.find(c => String(c['รหัสครุภัณฑ์']).trim() === String(r['รหัสครุภัณฑ์หลัก']).trim());
-            if (!p) return Swal.fire("ผิดพลาด", "ไม่พบข้อมูลหมวดหมู่หลัก", "error");
+            if(!p) return Swal.fire("ผิดพลาด", "ไม่พบข้อมูลหมวดหมู่หลัก", "error");
             const price = Number(r['ราคาต่อหน่วย']);
             const buyDate = new Date(r['วันที่ได้มา']);
             const today = new Date();
@@ -1111,23 +943,23 @@
             let netValue = price - accumDep;
             if (status === 'จำหน่ายแล้ว') { netValue = 0; accumDep = price; }
             else if (netValue < 1 || yearsUsed >= lifespan) { netValue = 1; accumDep = price - 1; }
-            const itemName = esc(r['ชื่อรายการ'] || p['ชื่อครุภัณฑ์']);
+            const itemName = r['ชื่อรายการ'] || p['ชื่อครุภัณฑ์'];
             Swal.fire({
                 title: 'ประเมินค่าเสื่อมราคาทรัพย์สิน',
                 html: `<div class="text-left space-y-2 mt-4 bg-slate-50 p-4 rounded-lg border border-slate-200" style="font-size: 14.5px !important;">
                         <p><i class="fa-solid fa-box text-blue-500 w-5"></i> <b>ครุภัณฑ์:</b> ${itemName}</p>
-                        <p><i class="fa-solid fa-tag text-blue-500 w-5"></i> <b>เลขรหัส:</b> ${esc(rawSerial)}</p>
-                        <p><i class="fa-solid fa-circle-info text-blue-500 w-5"></i> <b>สถานะปัจจุบัน:</b> <span class="font-bold text-indigo-700">${esc(status)}</span></p>
+                        <p><i class="fa-solid fa-tag text-blue-500 w-5"></i> <b>เลขรหัส:</b> ${rawSerial}</p>
+                        <p><i class="fa-solid fa-circle-info text-blue-500 w-5"></i> <b>สถานะปัจจุบัน:</b> <span class="font-bold text-indigo-700">${status}</span></p>
                         <hr class="my-2 border-slate-200">
                         <p><i class="fa-solid fa-calendar-days text-slate-500 w-5"></i> <b>วันที่ได้มา:</b> ${formatDateDisplay(r['วันที่ได้มา'])}</p>
                         <p><i class="fa-solid fa-coins text-slate-500 w-5"></i> <b>ราคาทุน:</b> ${price.toLocaleString('th-TH')} บาท</p>
                         <p><i class="fa-solid fa-clock-rotate-left text-slate-500 w-5"></i> <b>อายุใช้งานตามเกณฑ์:</b> ${lifespan} ปี (ใช้มาแล้ว ${yearsUsed.toFixed(2)} ปี)</p>
                         <hr class="my-2 border-slate-200">
                         <div class="bg-white p-2.5 rounded border border-red-100">
-                            <p class="text-red-500 flex justify-between"><span>ค่าเสื่อมราคาสะสม:</span> <b>- ${accumDep.toLocaleString('th-TH', { maximumFractionDigits: 2 })} ฿</b></p>
+                            <p class="text-red-500 flex justify-between"><span>ค่าเสื่อมราคาสะสม:</span> <b>- ${accumDep.toLocaleString('th-TH', {maximumFractionDigits:2})} ฿</b></p>
                         </div>
                         <div class="bg-green-50 p-2.5 rounded border border-green-200 mt-2">
-                            <p class="text-green-700 font-bold flex justify-between items-center" style="font-size: 16px !important;"><span>มูลค่าคงเหลือสุทธิ:</span> <b>${netValue.toLocaleString('th-TH', { maximumFractionDigits: 2 })} ฿</b></p>
+                            <p class="text-green-700 font-bold flex justify-between items-center" style="font-size: 16px !important;"><span>มูลค่าคงเหลือสุทธิ:</span> <b>${netValue.toLocaleString('th-TH', {maximumFractionDigits:2})} ฿</b></p>
                         </div>
                     </div>`,
                 confirmButtonColor: '#4f46e5',
@@ -1135,34 +967,71 @@
             });
         }
 
-        // =====================================================================
-        // RESET AUDIT
-        // =====================================================================
-        function confirmResetAudit() {
-            Swal.fire({
-                title: 'ยืนยันการเริ่มรอบตรวจนับใหม่?',
-                html: "ระบบจะเปลี่ยนสถานะการตรวจสอบครุภัณฑ์ทั้งโรงเรียนเป็น <br><b class='text-red-500'>'รอตรวจสอบ'</b> <br><br><span class='text-sm text-slate-500'>(ยกเว้นรายการที่ 'จำหน่ายแล้ว' จะไม่ถูกเปลี่ยน)</span><br>คุณต้องการดำเนินการต่อหรือไม่?",
-                icon: 'warning', showCancelButton: true,
-                confirmButtonColor: '#d33', cancelButtonColor: '#64748b',
-                confirmButtonText: 'ใช่, รีเซ็ตเลย!', cancelButtonText: 'ยกเลิก'
-            }).then((result) => { if (result.isConfirmed) { executeResetAudit(); } });
+        function toggleAuditCheck(serial, isChecked) {
+            const newStatus = isChecked ? 'ตรวจสอบแล้ว' : 'รอตรวจสอบ';
+            const lbl = document.getElementById(`lbl-${serial}`);
+            if (lbl) {
+                lbl.textContent = newStatus;
+                lbl.className = `font-bold text-[11px] ${isChecked ? 'text-teal-600' : 'text-red-500'}`;
+            }
+            const idxBase = STATE.records.findIndex(x => String(x['เลขครุภัณฑ์']).trim() === String(serial).trim());
+            if(idxBase !== -1) STATE.records[idxBase]['การตรวจสอบ'] = newStatus;
+            postData({ action: "updateCheckStatus", serialNumber: String(serial).trim(), checkStatus: newStatus });
         }
 
-        async function executeResetAudit() {
-            Swal.fire({ title: 'กำลังรีเซ็ตข้อมูลทั้งโรงเรียน...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+        function handleEditStatusChange() {
+            const status = document.getElementById("edit-status").value;
+            const disposalBox = document.getElementById("edit-disposal-container");
+            if(status === 'จำหน่ายแล้ว') { disposalBox.classList.remove("hidden"); }
+            else { disposalBox.classList.add("hidden"); document.getElementById("edit-disposal-date").value = ""; }
+        }
+
+        function delCatalog(code) {
+            if(!STATE.isAdmin) return Swal.fire("แจ้งเตือน", "กรุณาล็อกอินแอดมินก่อน", "warning");
+            Swal.fire({title: "ยืนยันการลบสารบัญ?", text: "ลบหมวดหมู่นี้แล้วจะไม่สามารถย้อนกลับได้", icon: "warning", showCancelButton: true}).then(r => {
+                if(r.isConfirmed) {
+                    STATE.catalog = STATE.catalog.filter(c => String(c['รหัสครุภัณฑ์']).trim() !== String(code).trim());
+                    FILTERED_CATALOG = [...STATE.catalog];
+                    renderAll();
+                    postData({ action: "deleteCatalog", code: code });
+                }
+            });
+        }
+
+        function delRecord(serial) {
+            if(!STATE.isAdmin) return Swal.fire("แจ้งเตือน", "กรุณาล็อกอินแอดมินก่อน", "warning");
+            const rawSerial = String(serial).trim();
+            Swal.fire({title: "ลบครุภัณฑ์ชิ้นนี้?", text: `ต้องการลบเลขครุภัณฑ์ ${rawSerial} ใช่หรือไม่?`, icon: "warning", showCancelButton: true}).then(r => {
+                if(r.isConfirmed) {
+                    STATE.records = STATE.records.filter(c => String(c['เลขครุภัณฑ์']).trim() !== rawSerial);
+                    FILTERED_RECORDS = [...STATE.records];
+                    renderAll();
+                    postData({ action: "deleteRecord", serialNumber: rawSerial });
+                }
+            });
+        }
+
+        function processAdminLogin() {
+            if(document.getElementById("admin-user").value === "admin" && document.getElementById("admin-pass").value === "7890") {
+                STATE.isAdmin = true;
+                document.getElementById("admin-btn").className = "bg-green-700 border border-green-600 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-1.5 shadow-md transition-all text-white";
+                document.getElementById("admin-btn-text").textContent = "แอดมินออนไลน์";
+                document.getElementById("admin-action-buttons").classList.remove("hidden");
+                toggleAdminModal();
+                Swal.fire("สำเร็จ", "ปลดล็อกฟังก์ชันเพิ่ม/แก้ไข/ลบ เรียบร้อย", "success");
+            } else { Swal.fire("ผิดพลาด", "รหัสผ่านไม่ถูกต้อง", "error"); }
+        }
+
+        function formatDateDisplay(dateString) {
+            if(!dateString) return "-";
             try {
-                const res = await fetch(APP_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'resetAllAudits' }) });
-                const data = await res.json();
-                if (data.status === 'success') {
-                    Swal.fire("สำเร็จ", "รีเซ็ตสถานะเป็น 'รอตรวจสอบ' เรียบร้อยแล้ว", "success");
-                    fetchDataFromSheet();
-                } else { Swal.fire("ผิดพลาด", data.message, "error"); }
-            } catch (e) { Swal.fire("ผิดพลาด", "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้", "error"); }
+                const d = new Date(dateString);
+                if (isNaN(d)) return dateString;
+                const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+                return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear() + 543}`;
+            } catch(e) { return dateString; }
         }
 
-        // =====================================================================
-        // EXPORT
-        // =====================================================================
         function exportCatalogToExcel() {
             if (FILTERED_CATALOG.length === 0) return Swal.fire("แจ้งเตือน", "ไม่มีข้อมูลสารบัญให้ส่งออก", "warning");
             let csv = "\uFEFFรหัสครุภัณฑ์,ชื่อครุภัณฑ์,ประเภทครุภัณฑ์,อายุการใช้งาน(ปี),จำนวนคงเหลือ(ใช้งาน),หน่วยนับ\n";
@@ -1170,7 +1039,7 @@
                 const activeCount = STATE.records.filter(r =>
                     String(r['รหัสครุภัณฑ์หลัก']).trim() === String(c['รหัสครุภัณฑ์']).trim() &&
                     String(r['สถานะ']).trim() === 'ใช้งาน').length;
-                csv += `"${c['รหัสครุภัณฑ์']}","${c['ชื่อครุภัณฑ์']}","${c['ประเภทครุภัณฑ์'] || ''}","${c['อายุการใช้งาน']}","${activeCount}","${c['หน่วยนับ'] || ''}"\n`;
+                csv += `"${c['รหัสครุภัณฑ์']}","${c['ชื่อครุภัณฑ์']}","${c['ประเภทครุภัณฑ์']||''}","${c['อายุการใช้งาน']}","${activeCount}","${c['หน่วยนับ']||''}"\n`;
             });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" }));
@@ -1183,17 +1052,40 @@
             FILTERED_RECORDS.forEach(r => {
                 const displaySerial = String(r['เลขครุภัณฑ์']).trim();
                 const chkStatus = r['การตรวจสอบ'] ? String(r['การตรวจสอบ']).trim() : 'ตรวจสอบแล้ว';
+                // ✅ export รองรับ "ไม่พบครุภัณฑ์"
                 let excelStatus;
                 if (chkStatus === 'ไม่พบครุภัณฑ์') {
                     excelStatus = 'ไม่พบครุภัณฑ์';
                 } else {
                     excelStatus = (chkStatus === 'ตรวจสอบแล้ว' || chkStatus === 'มี') ? 'ตรวจสอบแล้ว' : 'รอตรวจสอบ';
                 }
-                csv += `"${r['รหัสครุภัณฑ์หลัก']}","${formatDateDisplay(r['วันที่ได้มา'])}","${displaySerial}","${r['ชื่อรายการ'] || ''}","${r['ลักษณะขนาด'] || ''}","${r['ราคาต่อหน่วย']}","${r['สถานที่เก็บ']}","${r['สถานะ']}","${formatDateDisplay(r['วันที่จำหน่าย'])}","${r['ประเภทเงิน'] || ''}","${r['วิธีการที่ได้มา'] || ''}","${excelStatus}","${r['รหัส GFMIS'] || ''}","${r['เอกสารอ้างอิง'] || ''}"\n`;
+                csv += `"${r['รหัสครุภัณฑ์หลัก']}","${formatDateDisplay(r['วันที่ได้มา'])}","${displaySerial}","${r['ชื่อรายการ']||''}","${r['ลักษณะขนาด']||''}","${r['ราคาต่อหน่วย']}","${r['สถานที่เก็บ']}","${r['สถานะ']}","${formatDateDisplay(r['วันที่จำหน่าย'])}","${r['ประเภทเงิน']||''}","${r['วิธีการที่ได้มา']||''}","${excelStatus}","${r['รหัส GFMIS']||''}","${r['เอกสารอ้างอิง']||''}"\n`;
             });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" }));
             link.download = "ทะเบียนทรัพย์สินรายชิ้น.csv"; link.click();
+        }
+
+        function confirmResetAudit() {
+            Swal.fire({
+                title: 'ยืนยันการเริ่มรอบตรวจนับใหม่?',
+                html: "ระบบจะเปลี่ยนสถานะการตรวจสอบครุภัณฑ์ทั้งโรงเรียนเป็น <br><b class='text-red-500'>'รอตรวจสอบ'</b> <br><br><span class='text-sm text-slate-500'>(ยกเว้นรายการที่ 'จำหน่ายแล้ว' จะไม่ถูกเปลี่ยน)</span><br>คุณต้องการดำเนินการต่อหรือไม่?",
+                icon: 'warning', showCancelButton: true,
+                confirmButtonColor: '#d33', cancelButtonColor: '#64748b',
+                confirmButtonText: 'ใช่, รีเซ็ตเลย!', cancelButtonText: 'ยกเลิก'
+            }).then((result) => { if (result.isConfirmed) { executeResetAudit(); } });
+        }
+
+        async function executeResetAudit() {
+            Swal.fire({ title: 'กำลังรีเซ็ตข้อมูลทั้งโรงเรียน...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
+            try {
+                const res = await fetch('/api/links', { method: 'POST', body: JSON.stringify({ action: 'resetAllAudits' }) });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    Swal.fire("สำเร็จ", "รีเซ็ตสถานะเป็น 'รอตรวจสอบ' เรียบร้อยแล้ว", "success");
+                    fetchDataFromSheet();
+                } else { Swal.fire("ผิดพลาด", data.message, "error"); }
+            } catch(e) { Swal.fire("ผิดพลาด", "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้", "error"); }
         }
     </script>
 </body>

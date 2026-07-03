@@ -474,8 +474,10 @@
         async function fetchDataFromSheet() {
             setStatus('loading');
             try {
-                const res = await fetch(APP_SCRIPT_URL + "?action=getData");
+                // เปลี่ยนไปเรียกใช้ API ช่องทางด่วนของเราแทน
+                const res = await fetch("/api/getData"); 
                 const data = await res.json();
+                
                 if (data.status === 'success') {
                     STATE.catalog = (data.catalog || []).sort((a, b) => parseInt(a['รหัสครุภัณฑ์']) - parseInt(b['รหัสครุภัณฑ์']));
                     STATE.records = data.records || [];

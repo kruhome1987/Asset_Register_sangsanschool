@@ -97,6 +97,10 @@
                     <i class="fa-solid fa-lock text-amber-400" id="admin-icon"></i>
                     <span id="admin-btn-text">สำหรับผู้ดูแลระบบ</span>
                 </button>
+                <button onclick="processLogout()" class="hidden bg-red-600 hover:bg-red-700 border border-red-500 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-white flex items-center gap-1.5 shadow-md transition-all" id="logout-btn">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <span>ออกจากระบบ</span>
+                </button>
             </div>
         </div>
     </header>
@@ -599,7 +603,7 @@
         }
 
         // =====================================================================
-        // ADMIN LOGIN
+        // ADMIN LOGIN / LOGOUT
         // =====================================================================
         async function processAdminLogin() {
             const username = document.getElementById("admin-user").value.trim();
@@ -610,13 +614,61 @@
             const hash = await sha256(password);
             if (username === ADMIN_USERNAME && hash === ADMIN_PASSWORD_HASH) {
                 STATE.isAdmin = true;
-                document.getElementById("admin-btn").className = "bg-green-700 border border-green-600 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-1.5 shadow-md transition-all text-white";
+                
+                // เปลี่ยนลักษณะปุ่มแอดมินเป็นออนไลน์ (และเอา onclick ออกเพื่อไม่ให้เปิด Modal ซ้ำ)
+                const adminBtn = document.getElementById("admin-btn");
+                adminBtn.className = "bg-green-700 border border-green-600 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-1.5 shadow-md transition-all text-white cursor-default";
+                adminBtn.onclick = null; 
+                document.getElementById("admin-icon").className = "fa-solid fa-unlock text-white";
                 document.getElementById("admin-btn-text").textContent = "แอดมินออนไลน์";
+                
+                // แสดงปุ่ม Logout และ ปุ่ม Action ต่างๆ
+                document.getElementById("logout-btn").classList.remove("hidden");
                 document.getElementById("admin-action-buttons").classList.remove("hidden");
+                
                 document.getElementById("admin-pass").value = ""; 
                 toggleAdminModal();
                 Swal.fire("สำเร็จ", "ปลดล็อกฟังก์ชันเพิ่ม/แก้ไข/ลบ เรียบร้อย", "success");
-            } else { Swal.fire("ผิดพลาด", "Username หรือรหัสผ่านไม่ถูกต้อง", "error"); }
+            } else { 
+                Swal.fire("ผิดพลาด", "Username หรือรหัสผ่านไม่ถูกต้อง", "error"); 
+            }
+        }
+
+        function processLogout() {
+            Swal.fire({
+                title: 'ออกจากระบบ?',
+                text: "คุณต้องการออกจากโหมดผู้ดูแลระบบใช่หรือไม่?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'ออกจากระบบ',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    STATE.isAdmin = false;
+                    
+                    // คืนค่าปุ่มแอดมิน
+                    const adminBtn = document.getElementById("admin-btn");
+                    adminBtn.className = "bg-slate-800 hover:bg-slate-700 border border-slate-600 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-1.5 shadow-md transition-all text-white";
+                    adminBtn.onclick = toggleAdminModal;
+                    document.getElementById("admin-icon").className = "fa-solid fa-lock text-amber-400";
+                    document.getElementById("admin-btn-text").textContent = "สำหรับผู้ดูแลระบบ";
+                    
+                    // ซ่อนปุ่ม Logout
+                    document.getElementById("logout-btn").classList.add("hidden");
+                    
+                    // ซ่อนปุ่มจัดการ (เพิ่ม/ตรวจสอบ)
+                    document.getElementById("admin-action-buttons").classList.add("hidden");
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'ออกจากระบบแล้ว',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            });
         }
 
         // =====================================================================

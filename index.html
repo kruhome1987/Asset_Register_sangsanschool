@@ -86,7 +86,7 @@
                 <button type="button" onclick="showPublicPINs()" class="bg-emerald-600 hover:bg-emerald-500 border border-emerald-500 text-white px-4 py-2 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-1.5 shadow-md transition-all">
                     🔑 ดูรหัส Room PIN
                 </button>
-                <button onclick="toggleAdminModal()" class="bg-slate-800 hover:bg-slate-700 border border-slate-600 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-1.5 shadow-md transition-all" id="admin-btn">
+                <button onclick="toggleAdminModal()" class="bg-slate-800 hover:bg-slate-700 border border-slate-600 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-1.5 shadow-md transition-all cursor-pointer" id="admin-btn">
                     <i class="fa-solid fa-lock text-amber-400" id="admin-icon"></i>
                     <span id="admin-btn-text">สำหรับผู้ดูแลระบบ</span>
                 </button>
@@ -377,7 +377,7 @@
 
     <div id="admin-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[110] flex">
         <div class="bg-white rounded-2xl p-6 w-full max-w-sm relative shadow-2xl">
-            <button onclick="toggleAdminModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <button onclick="document.getElementById('admin-modal').classList.add('hidden')" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
             <h3 class="font-bold text-center mb-4"><i class="fa-solid fa-shield-halved text-indigo-600 text-4xl block mb-2"></i> เข้าสู่ระบบผู้ดูแล</h3>
             <input type="text" id="admin-user" placeholder="Username" class="w-full mb-3 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-400">
             <input type="password" id="admin-pass" placeholder="Password" class="w-full mb-4 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-400"
@@ -391,7 +391,7 @@
     </footer>
 
     <script>
-        // JS Logic คงเดิม 
+        // JS Logic 
         const OBEC_CATEGORIES = [
           { title: "1. อาคาร", lifespan: 25, rate: "4%" },
           { title: "2. อาคารชั่วคราว / โรงเรือน", lifespan: 10, rate: "10%" },
@@ -473,7 +473,38 @@
         function toggleAddCatalogModal() { document.getElementById("add-catalog-modal").classList.toggle("hidden"); }
         function toggleAddRecordModal()  { document.getElementById("add-record-modal").classList.toggle("hidden"); }
         function toggleEditModal()       { document.getElementById("edit-modal").classList.toggle("hidden"); }
-        function toggleAdminModal()      { document.getElementById("admin-modal").classList.toggle("hidden"); }
+        
+        // --- ส่วนที่แก้ไข: เพิ่มระบบ Logout เมื่อกดปุ่มเดิม ---
+        function toggleAdminModal() {
+            if (STATE.isAdmin) {
+                Swal.fire({
+                    title: 'ยืนยันการออกจากระบบ?',
+                    text: "คุณต้องการออกจากโหมดผู้ดูแลระบบใช่หรือไม่?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#64748b',
+                    confirmButtonText: 'ออกจากระบบ',
+                    cancelButtonText: 'ยกเลิก'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        processAdminLogout();
+                    }
+                });
+            } else {
+                document.getElementById("admin-modal").classList.toggle("hidden");
+            }
+        }
+
+        function processAdminLogout() {
+            STATE.isAdmin = false;
+            document.getElementById("admin-btn").className = "bg-slate-800 hover:bg-slate-700 border border-slate-600 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-1.5 shadow-md transition-all cursor-pointer";
+            document.getElementById("admin-icon").className = "fa-solid fa-lock text-amber-400";
+            document.getElementById("admin-btn-text").textContent = "สำหรับผู้ดูแลระบบ";
+            document.getElementById("admin-action-buttons").classList.add("hidden");
+            Swal.fire("ออกจากระบบ", "กลับสู่โหมดผู้ใช้งานทั่วไปเรียบร้อย", "info");
+        }
+        // ---------------------------------------------
 
         window.onload = () => { initDropdowns(); initView(); fetchDataFromSheet(); };
 
@@ -537,11 +568,14 @@
             const hash = await sha256(password);
             if (username === ADMIN_USERNAME && hash === ADMIN_PASSWORD_HASH) {
                 STATE.isAdmin = true;
-                document.getElementById("admin-btn").className = "bg-green-700 border border-green-600 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-1.5 shadow-md transition-all text-white";
+                // --- ส่วนที่แก้ไข: เปลี่ยนสีปุ่มและไอคอนตอน Login สำเร็จ ---
+                document.getElementById("admin-btn").className = "bg-green-700 hover:bg-green-800 border border-green-600 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-1.5 shadow-md transition-all text-white cursor-pointer";
+                document.getElementById("admin-icon").className = "fa-solid fa-unlock text-white";
                 document.getElementById("admin-btn-text").textContent = "แอดมินออนไลน์";
                 document.getElementById("admin-action-buttons").classList.remove("hidden");
                 document.getElementById("admin-pass").value = ""; 
-                toggleAdminModal(); Swal.fire("สำเร็จ", "ปลดล็อกฟังก์ชันเพิ่ม/แก้ไข/ลบ เรียบร้อย", "success");
+                document.getElementById("admin-modal").classList.add("hidden"); 
+                Swal.fire("สำเร็จ", "ปลดล็อกฟังก์ชันเพิ่ม/แก้ไข/ลบ เรียบร้อย", "success");
             } else { Swal.fire("ผิดพลาด", "Username หรือรหัสผ่านไม่ถูกต้อง", "error"); }
         }
 

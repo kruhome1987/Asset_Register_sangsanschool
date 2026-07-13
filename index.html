@@ -47,28 +47,21 @@
         .btn-ce__circle {
             position: absolute; left: -1px; top: -1px; bottom: -1px;
             display: flex; align-items: center; justify-content: flex-start;
-            padding-left: 0.9rem; /* จัดไอคอนให้อยู่กึ่งกลางวงกลมแรก */
+            padding-left: 0.9rem;
             width: 2.85rem; border-radius: 999px;
             transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1;
         }
-        /* ชุดสีวงกลม */
         .btn-ce__circle.teal { background: linear-gradient(135deg, #0f766e, #14b8a6); }
         .btn-ce__circle.indigo { background: linear-gradient(135deg, #4338ca, #6366f1); }
-        
         .btn-ce__icon { color: white; z-index: 2; font-size: 1rem; }
-        
         .btn-ce__text {
             position: absolute; width: 100%; padding-left: 3.5rem; text-align: left;
             z-index: 2; color: #475569; transition: color 0.3s ease; pointer-events: none;
         }
-
-        /* Hover และสถานะ Active (หน้าปัจจุบันที่ถูกเลือก) */
         .btn--circle-expand:hover .btn-ce__circle, 
         .btn--circle-expand.active .btn-ce__circle { width: calc(100% + 2px); }
-        
         .btn--circle-expand:hover .btn-ce__text, 
         .btn--circle-expand.active .btn-ce__text { color: white; }
-        
         .btn--circle-expand:active { transform: scale(0.96); }
     </style>
 </head>
@@ -97,10 +90,6 @@
                     <i class="fa-solid fa-lock text-amber-400" id="admin-icon"></i>
                     <span id="admin-btn-text">สำหรับผู้ดูแลระบบ</span>
                 </button>
-                <button onclick="processLogout()" class="hidden bg-red-600 hover:bg-red-700 border border-red-500 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-white flex items-center gap-1.5 shadow-md transition-all" id="logout-btn">
-                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                    <span>ออกจากระบบ</span>
-                </button>
             </div>
         </div>
     </header>
@@ -109,13 +98,11 @@
         
         <!-- แถบการดำเนินการ และ เมนูลัดเปลี่ยนหน้าเว็บ -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 flex flex-col xl:flex-row items-center justify-between gap-5">
-            <!-- ส่วนข้อมูลสถานะ -->
             <div class="flex items-center gap-3 w-full xl:w-auto">
                 <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 text-lg shrink-0"><i class="fa-solid fa-cloud-arrow-down"></i></div>
                 <div><h3 class="font-bold text-slate-900">การดำเนินการ</h3><p class="text-xs sm:text-sm text-slate-500">ซิงค์เวลาล่าสุด: <span id="last-sync-time">-</span></p></div>
             </div>
             
-            <!-- เมนูนำทาง (Circle Expand) -->
             <div class="flex flex-col sm:flex-row items-center gap-3 w-full xl:w-auto justify-center xl:border-x border-slate-200 xl:px-5">
                 <button onclick="navigatePage('catalog')" id="nav-catalog" class="btn--circle-expand">
                     <span class="btn-ce__circle teal"><i class="fa-solid fa-list btn-ce__icon"></i></span>
@@ -127,7 +114,6 @@
                 </button>
             </div>
 
-            <!-- ส่วนปุ่มคำสั่งหลัก -->
             <div class="flex flex-wrap items-center gap-2 w-full xl:w-auto justify-center xl:justify-end">
                 <div id="admin-action-buttons" class="hidden flex gap-2 border-r border-slate-200 pr-3 mr-1">
                     <button onclick="toggleAddCatalogModal()" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-xl font-bold transition shadow-sm"><i class="fa-solid fa-folder-plus"></i> เพิ่มประเภทหลัก</button>
@@ -143,18 +129,18 @@
         </div>
 
         <div class="space-y-6">
-            <!-- ตารางสารบัญประเภทหลัก (จะแสดงเมื่ออยู่ที่หน้า Catalog) -->
-            <div id="section-catalog" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex-col h-auto min-h-[300px]">
+            <!-- ตารางสารบัญประเภทหลัก -->
+            <div id="section-catalog" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-3 sm:p-5 flex-col h-auto min-h-[300px]">
                 <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
                     <h2 class="font-bold text-slate-800"><i class="fa-solid fa-list text-teal-600"></i> สารบัญประเภทหลัก</h2>
-                    <div class="flex items-center gap-2">
-                        <button onclick="exportCatalogToExcel()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-lg font-bold transition shadow-sm flex items-center gap-1.5"><i class="fa-solid fa-file-excel"></i> ส่งออก สารบัญ Excel</button>
-                        <input type="text" id="catalog-search" oninput="filterCatalog()" placeholder="ค้นหาหมวดหมู่..." class="w-52 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg outline-none">
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <button onclick="exportCatalogToExcel()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-lg font-bold transition shadow-sm flex items-center gap-1.5 flex-1 sm:flex-none justify-center"><i class="fa-solid fa-file-excel"></i> ส่งออก Excel</button>
+                        <input type="text" id="catalog-search" oninput="filterCatalog()" placeholder="ค้นหาหมวดหมู่..." class="w-full sm:w-52 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg outline-none">
                     </div>
                 </div>
-                <div class="flex-grow overflow-auto custom-scrollbar border border-slate-100 rounded-lg max-h-[400px]">
-                    <table class="w-full text-left border-collapse min-w-[800px]">
-                        <thead class="bg-slate-100 text-slate-600 sticky top-0">
+                <div class="flex-grow overflow-x-hidden md:overflow-auto custom-scrollbar md:border border-slate-100 rounded-lg max-h-[500px]">
+                    <table class="w-full text-left border-collapse min-w-full xl:min-w-[800px] block md:table">
+                        <thead class="bg-slate-100 text-slate-600 sticky top-0 hidden md:table-header-group">
                             <tr>
                                 <th class="p-3">รหัสครุภัณฑ์</th>
                                 <th class="p-3">ชื่อครุภัณฑ์</th>
@@ -165,50 +151,50 @@
                                 <th class="p-3 text-center w-24">จัดการ</th>
                             </tr>
                         </thead>
-                        <tbody id="catalog-tbody" class="divide-y divide-slate-100"></tbody>
+                        <tbody id="catalog-tbody" class="divide-y md:divide-y-0 divide-slate-100 block md:table-row-group"></tbody>
                     </table>
                 </div>
-                <div class="flex justify-between items-center mt-3 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                <div class="flex justify-between items-center mt-4 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
                     <button id="cat-prev-btn" onclick="changeCatalogPage(-1)" class="bg-white border border-slate-200 hover:bg-slate-100 px-4 py-1.5 rounded-lg font-bold disabled:opacity-40 transition">ก่อนหน้า</button>
                     <span id="cat-page-info" class="font-medium text-slate-600">หน้า 1 / 1</span>
                     <button id="cat-next-btn" onclick="changeCatalogPage(1)" class="bg-white border border-slate-200 hover:bg-slate-100 px-4 py-1.5 rounded-lg font-bold disabled:opacity-40 transition">ถัดไป</button>
                 </div>
             </div>
 
-            <!-- ตารางทะเบียนรายชิ้น (จะแสดงเมื่ออยู่ที่หน้า Records) -->
-            <div id="section-records" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex-col h-auto min-h-[500px]">
+            <!-- ตารางทะเบียนรายชิ้น -->
+            <div id="section-records" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-3 sm:p-5 flex-col h-auto min-h-[500px]">
                 <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
                     <h2 class="font-bold text-slate-800"><i class="fa-solid fa-clock-rotate-left text-indigo-600"></i> ทะเบียนรายชิ้น</h2>
-                    <div class="flex gap-2">
-                        <button onclick="exportToExcel()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-lg font-bold transition shadow-sm flex items-center gap-1.5"><i class="fa-solid fa-file-excel"></i> ส่งออก ทะเบียน Excel</button>
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <button onclick="exportToExcel()" class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-lg font-bold transition shadow-sm flex items-center justify-center gap-1.5"><i class="fa-solid fa-file-excel"></i> ส่งออก ทะเบียน Excel</button>
                     </div>
                 </div>
-                <div class="flex flex-wrap gap-2 mb-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                    <input type="text" id="filter-query" oninput="handleRealtimeFilter()" placeholder="ค้นหาเลข/ชื่อ/ลักษณะ..." class="flex-grow px-3 py-1.5 bg-white border border-slate-200 rounded-lg outline-none">
-                    <select id="filter-parent" onchange="handleRealtimeFilter()" class="w-48 px-2 py-1.5 bg-white border border-slate-200 rounded-lg outline-none">
+                <div class="flex flex-wrap gap-2 mb-4 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <input type="text" id="filter-query" oninput="handleRealtimeFilter()" placeholder="ค้นหาเลข/ชื่อ/ลักษณะ..." class="flex-grow min-w-[200px] px-3 py-1.5 bg-white border border-slate-200 rounded-lg outline-none">
+                    <select id="filter-parent" onchange="handleRealtimeFilter()" class="w-full sm:w-48 px-2 py-1.5 bg-white border border-slate-200 rounded-lg outline-none">
                         <option value="">ทุกครุภัณฑ์หลัก</option>
                     </select>
-                    <select id="filter-location" onchange="handleRealtimeFilter()" class="w-40 px-2 py-1.5 bg-white border border-slate-200 rounded-lg outline-none">
+                    <select id="filter-location" onchange="handleRealtimeFilter()" class="w-full sm:w-40 px-2 py-1.5 bg-white border border-slate-200 rounded-lg outline-none">
                         <option value="">ทุกสถานที่ (ห้อง)</option>
                     </select>
-                    <select id="filter-status" onchange="handleRealtimeFilter()" class="w-36 px-2 py-1.5 bg-white border border-slate-200 rounded-lg outline-none">
+                    <select id="filter-status" onchange="handleRealtimeFilter()" class="w-full sm:w-36 px-2 py-1.5 bg-white border border-slate-200 rounded-lg outline-none">
                         <option value="">ทุกสถานะ</option>
                         <option value="ใช้งาน">ใช้งาน</option>
                         <option value="รอจำหน่าย">รอจำหน่าย</option>
                         <option value="จำหน่ายแล้ว">จำหน่ายแล้ว</option>
                     </select>
-                    <select id="filter-audit" onchange="handleRealtimeFilter()" class="w-44 px-2 py-1.5 bg-white border border-slate-200 rounded-lg outline-none text-teal-700 font-medium">
+                    <select id="filter-audit" onchange="handleRealtimeFilter()" class="w-full sm:w-44 px-2 py-1.5 bg-white border border-slate-200 rounded-lg outline-none text-teal-700 font-medium">
                         <option value="">ทุกการตรวจสอบ</option>
                         <option value="ตรวจสอบแล้ว">✅ ตรวจสอบแล้ว</option>
                         <option value="รอตรวจสอบ">⏳ รอตรวจสอบ</option>
                         <option value="ไม่พบครุภัณฑ์">🚫 ไม่พบครุภัณฑ์</option>
                     </select>
-                    <button onclick="clearFilter()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-1.5 rounded-lg font-bold"><i class="fa-solid fa-eraser"></i> ล้าง</button>
+                    <button onclick="clearFilter()" class="w-full sm:w-auto bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-1.5 rounded-lg font-bold"><i class="fa-solid fa-eraser"></i> ล้างการค้นหา</button>
                 </div>
 
-                <div class="flex-grow overflow-auto custom-scrollbar border border-slate-100 rounded-lg max-h-[600px]">
-                    <table class="w-full text-left border-collapse min-w-[950px]">
-                        <thead class="bg-slate-800 text-white sticky top-0 z-10">
+                <div class="flex-grow overflow-x-hidden md:overflow-auto custom-scrollbar md:border border-slate-100 rounded-lg max-h-[600px] p-1 md:p-0">
+                    <table class="w-full text-left border-collapse min-w-full xl:min-w-[950px] block md:table">
+                        <thead class="bg-slate-800 text-white sticky top-0 z-10 hidden md:table-header-group">
                             <tr>
                                 <th class="p-3 whitespace-nowrap">ครุภัณฑ์หลัก</th>
                                 <th class="p-3 whitespace-nowrap">เลขครุภัณฑ์ (ชิ้น)</th>
@@ -219,11 +205,11 @@
                                 <th class="p-3 text-center print-hide w-28">จัดการ</th>
                             </tr>
                         </thead>
-                        <tbody id="records-tbody" class="divide-y divide-slate-100"></tbody>
+                        <tbody id="records-tbody" class="divide-y md:divide-y-0 divide-transparent md:divide-slate-100 block md:table-row-group"></tbody>
                     </table>
                 </div>
                 
-                <div class="flex justify-between items-center mt-3 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                <div class="flex justify-between items-center mt-4 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
                     <button id="rec-prev-btn" onclick="changeRecordsPage(-1)" class="bg-white border border-slate-200 hover:bg-slate-100 px-4 py-1.5 rounded-lg font-bold disabled:opacity-40 transition">ก่อนหน้า</button>
                     <div class="text-center">
                         <span id="rec-page-info" class="font-bold text-slate-700">หน้า 1 / 1</span>
@@ -235,7 +221,7 @@
         </div>
     </main>
 
-    <!-- Modal: เพิ่มประเภทหลัก -->
+    <!-- Modal เพิ่มประเภทหลัก, เพิ่มรายชิ้น, แก้ไข, Login (เหมือนเดิม) -->
     <div id="add-catalog-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[100] flex">
         <div class="bg-white rounded-2xl p-6 w-full max-w-lg relative shadow-2xl border-t-4 border-t-teal-500">
             <button onclick="toggleAddCatalogModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -256,7 +242,6 @@
         </div>
     </div>
 
-    <!-- Modal: เพิ่มรายชิ้น -->
     <div id="add-record-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[100] flex">
         <div class="bg-white rounded-2xl p-5 w-full max-w-lg relative shadow-2xl border-t-4 border-t-indigo-500 overflow-y-auto max-h-[90vh] custom-scrollbar">
             <button onclick="toggleAddRecordModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -315,7 +300,6 @@
         </div>
     </div>
 
-    <!-- Modal: แก้ไข -->
     <div id="edit-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[100] flex">
         <div class="bg-white rounded-2xl p-5 w-full max-w-lg relative shadow-2xl border-t-4 border-t-amber-400 overflow-y-auto max-h-[90vh] custom-scrollbar">
             <button onclick="toggleEditModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -391,7 +375,6 @@
         </div>
     </div>
 
-    <!-- Modal: Admin Login -->
     <div id="admin-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[110] flex">
         <div class="bg-white rounded-2xl p-6 w-full max-w-sm relative shadow-2xl">
             <button onclick="toggleAdminModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -408,9 +391,7 @@
     </footer>
 
     <script>
-        // =====================================================================
-        // ข้อมูล OBEC หมวดหมู่มาตรฐาน สพฐ.
-        // =====================================================================
+        // JS Logic คงเดิม แก้เฉพาะ HTML ใน renderCatalog และ renderRecords
         const OBEC_CATEGORIES = [
           { title: "1. อาคาร", lifespan: 25, rate: "4%" },
           { title: "2. อาคารชั่วคราว / โรงเรือน", lifespan: 10, rate: "10%" },
@@ -428,58 +409,38 @@
           { title: "12. ครุภัณฑ์งานบ้านงานครัว (หมวด 12061200)", lifespan: 5, rate: "20%" }
         ];
 
-        // =====================================================================
-        // STATE
-        // =====================================================================
         let STATE = { catalog: [], records: [], isAdmin: false };
         let FILTERED_CATALOG = [];
         let FILTERED_RECORDS = [];
         let PAGINATION = { catalogPage: 1, catalogLimit: 20, recordsPage: 1, recordsLimit: 100 };
         let roomPINData = {};
         let unlockedRooms = new Set();
-
-        // ตรวจสอบ Parameter จาก URL ว่าผู้ใช้อยู่หน้าไหน (Default คือ สารบัญ)
         const urlParams = new URLSearchParams(window.location.search);
         const CURRENT_VIEW = urlParams.get('view') || 'catalog'; 
 
-        // =====================================================================
-        // UTILS & NAVIGATION
-        // =====================================================================
-
         function navigatePage(view) {
-            // สั่งโหลดหน้าเว็บใหม่ พร้อมเติม ?view= ลงใน URL
             const url = new URL(window.location.href);
             url.searchParams.set('view', view);
             window.location.href = url.href; 
         }
 
         function initView() {
-            // ควบคุมการแสดงผลตาม Parameter ที่อ่านได้จาก URL
             const secCatalog = document.getElementById('section-catalog');
             const secRecords = document.getElementById('section-records');
             const btnCatalog = document.getElementById('nav-catalog');
             const btnRecords = document.getElementById('nav-records');
 
             if (CURRENT_VIEW === 'records') {
-                secCatalog.classList.add('hidden');
-                secCatalog.classList.remove('flex');
-                secRecords.classList.remove('hidden');
-                secRecords.classList.add('flex');
-                
-                btnCatalog.classList.remove('active');
-                btnRecords.classList.add('active');
+                secCatalog.classList.add('hidden'); secCatalog.classList.remove('flex');
+                secRecords.classList.remove('hidden'); secRecords.classList.add('flex');
+                btnCatalog.classList.remove('active'); btnRecords.classList.add('active');
             } else {
-                secCatalog.classList.remove('hidden');
-                secCatalog.classList.add('flex');
-                secRecords.classList.add('hidden');
-                secRecords.classList.remove('flex');
-                
-                btnCatalog.classList.add('active');
-                btnRecords.classList.remove('active');
+                secCatalog.classList.remove('hidden'); secCatalog.classList.add('flex');
+                secRecords.classList.add('hidden'); secRecords.classList.remove('flex');
+                btnCatalog.classList.add('active'); btnRecords.classList.remove('active');
             }
         }
 
-        /** Escape HTML เพื่อป้องกัน XSS */
         function esc(str) {
             if (str === null || str === undefined) return '';
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;');
@@ -514,14 +475,7 @@
         function toggleEditModal()       { document.getElementById("edit-modal").classList.toggle("hidden"); }
         function toggleAdminModal()      { document.getElementById("admin-modal").classList.toggle("hidden"); }
 
-        // =====================================================================
-        // INIT
-        // =====================================================================
-        window.onload = () => { 
-            initDropdowns(); 
-            initView(); // เรียกใช้งานเพื่อเซ็ตหน้าเว็บก่อนโหลดข้อมูล
-            fetchDataFromSheet(); 
-        };
+        window.onload = () => { initDropdowns(); initView(); fetchDataFromSheet(); };
 
         function initDropdowns() {
             const sel = document.getElementById("cat-type-select");
@@ -537,148 +491,65 @@
             }
         }
 
-        // =====================================================================
-        // API CALLS
-        // =====================================================================
-
         async function fetchDataFromSheet() {
             setStatus('loading');
             try {
                 const res = await fetch("/api/getData"); 
                 const data = await res.json();
-                
                 if (data.status === 'success') {
                     STATE.catalog = (data.catalog || []).sort((a, b) => parseInt(a['รหัสครุภัณฑ์']) - parseInt(b['รหัสครุภัณฑ์']));
                     STATE.records = data.records || [];
                     roomPINData = data.roomPINs || {};
                     document.getElementById("last-sync-time").textContent = new Date().toLocaleTimeString('th-TH');
-                    FILTERED_CATALOG = [...STATE.catalog];
-                    FILTERED_RECORDS = [...STATE.records];
-                    PAGINATION.catalogPage = 1;
-                    PAGINATION.recordsPage = 1;
-                    
-                    // Render เฉพาะสิ่งจำเป็น
+                    FILTERED_CATALOG = [...STATE.catalog]; FILTERED_RECORDS = [...STATE.records];
+                    PAGINATION.catalogPage = 1; PAGINATION.recordsPage = 1;
                     updateFilterDropdowns();
                     if(CURRENT_VIEW === 'catalog') renderCatalog();
                     if(CURRENT_VIEW === 'records') renderRecords();
-                    
                     setStatus('online');
-                } else {
-                    Swal.fire("ผิดพลาด", data.message || "โหลดข้อมูลไม่สำเร็จ", "error");
-                    setStatus('error');
-                }
-            } catch (e) {
-                console.error("fetchDataFromSheet error:", e);
-                setStatus('error');
-            }
+                } else { Swal.fire("ผิดพลาด", data.message || "โหลดข้อมูลไม่สำเร็จ", "error"); setStatus('error'); }
+            } catch (e) { console.error(e); setStatus('error'); }
         }
 
         async function postData(payload) {
             setStatus('loading');
             try {
                 const res = await fetch(APP_SCRIPT_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "text/plain" },
-                    body: JSON.stringify(payload)
+                    method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(payload)
                 });
                 const data = await res.json();
                 if (data.status !== 'success') { console.warn("postData warning:", data.message); }
                 if (payload.action !== "updateCheckStatus") { setTimeout(() => fetchDataFromSheet(), 2000); } 
                 else { setStatus('online'); }
             } catch (e) {
-                console.error("postData error:", e);
                 try {
-                    await fetch(APP_SCRIPT_URL, {
-                        method: "POST", mode: "no-cors",
-                        headers: { "Content-Type": "text/plain" },
-                        body: JSON.stringify(payload)
-                    });
+                    await fetch(APP_SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(payload) });
                     if (payload.action !== "updateCheckStatus") { setTimeout(() => fetchDataFromSheet(), 2500); } 
                     else { setStatus('online'); }
-                } catch (e2) {
-                    console.error("postData fallback error:", e2);
-                    setStatus('error');
-                }
+                } catch (e2) { console.error(e2); setStatus('error'); }
             }
         }
 
-        // =====================================================================
-        // ADMIN LOGIN / LOGOUT
-        // =====================================================================
         async function processAdminLogin() {
             const username = document.getElementById("admin-user").value.trim();
             const password = document.getElementById("admin-pass").value;
-            
             if (!username || !password) return Swal.fire("แจ้งเตือน", "กรุณากรอก Username และ Password", "warning");
-
             const hash = await sha256(password);
             if (username === ADMIN_USERNAME && hash === ADMIN_PASSWORD_HASH) {
                 STATE.isAdmin = true;
-                
-                // เปลี่ยนลักษณะปุ่มแอดมินเป็นออนไลน์ (และเอา onclick ออกเพื่อไม่ให้เปิด Modal ซ้ำ)
-                const adminBtn = document.getElementById("admin-btn");
-                adminBtn.className = "bg-green-700 border border-green-600 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-1.5 shadow-md transition-all text-white cursor-default";
-                adminBtn.onclick = null; 
-                document.getElementById("admin-icon").className = "fa-solid fa-unlock text-white";
+                document.getElementById("admin-btn").className = "bg-green-700 border border-green-600 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-1.5 shadow-md transition-all text-white";
                 document.getElementById("admin-btn-text").textContent = "แอดมินออนไลน์";
-                
-                // แสดงปุ่ม Logout และ ปุ่ม Action ต่างๆ
-                document.getElementById("logout-btn").classList.remove("hidden");
                 document.getElementById("admin-action-buttons").classList.remove("hidden");
-                
                 document.getElementById("admin-pass").value = ""; 
-                toggleAdminModal();
-                Swal.fire("สำเร็จ", "ปลดล็อกฟังก์ชันเพิ่ม/แก้ไข/ลบ เรียบร้อย", "success");
-            } else { 
-                Swal.fire("ผิดพลาด", "Username หรือรหัสผ่านไม่ถูกต้อง", "error"); 
-            }
+                toggleAdminModal(); Swal.fire("สำเร็จ", "ปลดล็อกฟังก์ชันเพิ่ม/แก้ไข/ลบ เรียบร้อย", "success");
+            } else { Swal.fire("ผิดพลาด", "Username หรือรหัสผ่านไม่ถูกต้อง", "error"); }
         }
 
-        function processLogout() {
-            Swal.fire({
-                title: 'ออกจากระบบ?',
-                text: "คุณต้องการออกจากโหมดผู้ดูแลระบบใช่หรือไม่?",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#ef4444',
-                cancelButtonColor: '#64748b',
-                confirmButtonText: 'ออกจากระบบ',
-                cancelButtonText: 'ยกเลิก'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    STATE.isAdmin = false;
-                    
-                    // คืนค่าปุ่มแอดมิน
-                    const adminBtn = document.getElementById("admin-btn");
-                    adminBtn.className = "bg-slate-800 hover:bg-slate-700 border border-slate-600 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-1.5 shadow-md transition-all text-white";
-                    adminBtn.onclick = toggleAdminModal;
-                    document.getElementById("admin-icon").className = "fa-solid fa-lock text-amber-400";
-                    document.getElementById("admin-btn-text").textContent = "สำหรับผู้ดูแลระบบ";
-                    
-                    // ซ่อนปุ่ม Logout
-                    document.getElementById("logout-btn").classList.add("hidden");
-                    
-                    // ซ่อนปุ่มจัดการ (เพิ่ม/ตรวจสอบ)
-                    document.getElementById("admin-action-buttons").classList.add("hidden");
-                    
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'ออกจากระบบแล้ว',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                }
-            });
-        }
-
-        // =====================================================================
-        // ROOM PIN
-        // =====================================================================
         function showPublicPINs() {
             let htmlContent = `
               <div class="mb-3 text-left">
                   <input type="text" id="search-pin" onkeyup="filterPINTable()" placeholder="🔍 ค้นหาชื่อห้อง หรือ สถานที่..."
-                         class="w-full px-3 py-2 border border-slate-300 rounded-lg outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all text-sm">
+                         class="w-full px-3 py-2 border border-slate-300 rounded-lg outline-none focus:border-emerald-500 transition-all text-sm">
               </div>
               <div style="max-height: 350px; overflow-y: auto;" class="custom-scrollbar border border-slate-200 rounded-lg">
                   <table class="w-full text-center border-collapse text-sm">
@@ -687,8 +558,7 @@
                     </thead><tbody>`;
             for (const [roomName, pinCode] of Object.entries(roomPINData)) {
                 htmlContent += `<tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors pin-row">
-                      <td class="p-2.5 pin-name text-slate-700">${esc(roomName)}</td>
-                      <td class="p-2.5"><b class="text-emerald-600 tracking-widest">${esc(pinCode)}</b></td>
+                      <td class="p-2.5 pin-name text-slate-700">${esc(roomName)}</td><td class="p-2.5"><b class="text-emerald-600 tracking-widest">${esc(pinCode)}</b></td>
                   </tr>`;
             }
             htmlContent += `</tbody></table></div>`;
@@ -707,24 +577,16 @@
             if (!roomPINData[roomName]) { successCallback(); return; }
             if (unlockedRooms.has(roomName)) { successCallback(); return; }
             Swal.fire({
-                title: `ล็อกอยู่! 🔒`,
-                text: `กรุณากรอกรหัส Room PIN 4 ตัว สำหรับสถานที่: ${roomName}`,
-                input: 'password',
-                inputAttributes: { maxlength: 4, autocapitalize: 'off', autocorrect: 'off', inputmode: 'numeric' },
-                showCancelButton: true, confirmButtonText: '🔓 ปลดล็อก', cancelButtonText: 'ยกเลิก',
-                confirmButtonColor: '#0d6efd', cancelButtonColor: '#dc3545',
+                title: `ล็อกอยู่! 🔒`, text: `กรุณากรอกรหัส Room PIN 4 ตัว สำหรับสถานที่: ${roomName}`,
+                input: 'password', inputAttributes: { maxlength: 4, autocapitalize: 'off', autocorrect: 'off', inputmode: 'numeric' },
+                showCancelButton: true, confirmButtonText: '🔓 ปลดล็อก', cancelButtonText: 'ยกเลิก', confirmButtonColor: '#0d6efd', cancelButtonColor: '#dc3545',
                 inputValidator: (value) => {
                     if (!value) return 'กรุณากรอกรหัส PIN!';
                     if (value !== roomPINData[roomName]) return 'รหัส PIN ไม่ถูกต้อง! ตรวจสอบที่ปุ่ม 🔑 ด้านบน';
                 }
             }).then((result) => {
-                if (result.isConfirmed) {
-                    unlockedRooms.add(roomName);
-                    Swal.fire({ icon: 'success', title: 'ปลดล็อกสำเร็จ!', text: 'คุณสามารถแก้ไขรายการอื่นๆ ในสถานที่นี้ได้เลย', timer: 1500, showConfirmButton: false });
-                    successCallback();
-                } else {
-                    if (switchElement && typeof switchElement.checked !== 'undefined') { switchElement.checked = !switchElement.checked; }
-                }
+                if (result.isConfirmed) { unlockedRooms.add(roomName); Swal.fire({ icon: 'success', title: 'ปลดล็อกสำเร็จ!', showConfirmButton: false, timer: 1500 }); successCallback(); }
+                else if (switchElement && typeof switchElement.checked !== 'undefined') { switchElement.checked = !switchElement.checked; }
             });
         }
 
@@ -736,7 +598,7 @@
             const chkEl = document.getElementById('chk-' + serialStr);
             if (chkEl) {
                 const wrapper = chkEl.closest('div.flex');
-                if (wrapper) wrapper.outerHTML = `<label class="flex items-center justify-center gap-1.5"><input type="checkbox" class="check-toggle check-toggle-notfound-checked" checked disabled><span class="font-bold text-[11px] text-red-600">ไม่พบครุภัณฑ์</span></label>`;
+                if (wrapper) wrapper.outerHTML = `<label class="flex items-center justify-start md:justify-center gap-1.5"><input type="checkbox" class="check-toggle check-toggle-notfound-checked" checked disabled><span class="font-bold text-[11px] text-red-600">ไม่พบครุภัณฑ์</span></label>`;
             }
             const idx = STATE.records.findIndex(x => String(x['เลขครุภัณฑ์']).trim() === serialStr);
             if (idx !== -1) STATE.records[idx]['การตรวจสอบ'] = 'ไม่พบครุภัณฑ์';
@@ -756,58 +618,60 @@
             const yearBE = (new Date().getFullYear() + 543) % 100;
             const suggested = `${parentCode}/${nextSeq}/${yearBE}`;
             const serialInput = document.getElementById("rec-serial");
-            serialInput.value = suggested;
-            serialInput.style.borderColor = "#6366f1";
-            serialInput.style.boxShadow = "0 0 0 3px rgba(99,102,241,0.15)";
+            serialInput.value = suggested; serialInput.style.borderColor = "#6366f1"; serialInput.style.boxShadow = "0 0 0 3px rgba(99,102,241,0.15)";
             const hint = document.getElementById("serial-hint");
-            if (hint) hint.textContent = `✨ แนะนำจากรายการที่มีอยู่ ${related.length} ชิ้น (แก้ไขได้)`;
+            if (hint) hint.textContent = `✨ แนะนำจากรายการที่มีอยู่ ${related.length} ชิ้น`;
         }
 
-        // =====================================================================
-        // RENDER
-        // =====================================================================
         function updateFilterDropdowns() {
             let htmlForm = '<option value="" disabled selected>-- เลือกครุภัณฑ์หลัก --</option>';
             STATE.catalog.forEach(c => htmlForm += `<option value="${esc(c['รหัสครุภัณฑ์'])}">[${esc(c['รหัสครุภัณฑ์'])}] ${esc(c['ชื่อครุภัณฑ์'])}</option>`);
-            document.getElementById("rec-parent-select").innerHTML = htmlForm;
-            document.getElementById("edit-parent").innerHTML = htmlForm;
+            document.getElementById("rec-parent-select").innerHTML = htmlForm; document.getElementById("edit-parent").innerHTML = htmlForm;
 
-            const parentSelect = document.getElementById("filter-parent");
-            const currParent = parentSelect.value;
+            const parentSelect = document.getElementById("filter-parent"); const currParent = parentSelect.value;
             let htmlParent = '<option value="">ทุกครุภัณฑ์หลัก</option>';
             STATE.catalog.forEach(c => htmlParent += `<option value="${esc(c['รหัสครุภัณฑ์'])}">${esc(c['ชื่อครุภัณฑ์'])}</option>`);
-            parentSelect.innerHTML = htmlParent;
-            parentSelect.value = currParent;
+            parentSelect.innerHTML = htmlParent; parentSelect.value = currParent;
 
-            const locSelect = document.getElementById("filter-location");
-            const currentVal = locSelect.value;
+            const locSelect = document.getElementById("filter-location"); const currentVal = locSelect.value;
             const locations = [...new Set(STATE.records.map(r => String(r['สถานที่เก็บ']).trim()))].filter(Boolean);
             let htmlLoc = '<option value="">ทุกสถานที่ (ห้อง)</option>';
             locations.forEach(l => htmlLoc += `<option value="${esc(l)}">${esc(l)}</option>`);
-            locSelect.innerHTML = htmlLoc;
-            locSelect.value = currentVal;
+            locSelect.innerHTML = htmlLoc; locSelect.value = currentVal;
         }
 
         function renderCatalog() {
             const tb = document.getElementById("catalog-tbody");
-            const list = FILTERED_CATALOG;
-            const totalItems = list.length;
+            const list = FILTERED_CATALOG; const totalItems = list.length;
             const maxPage = Math.ceil(totalItems / PAGINATION.catalogLimit) || 1;
             if (PAGINATION.catalogPage > maxPage) PAGINATION.catalogPage = maxPage;
             const startIdx = (PAGINATION.catalogPage - 1) * PAGINATION.catalogLimit;
             const pageList = list.slice(startIdx, startIdx + PAGINATION.catalogLimit);
             tb.innerHTML = pageList.length ? "" : `<tr><td colspan="7" class="p-4 text-center text-slate-400">ไม่มีข้อมูล</td></tr>`;
+            
             pageList.forEach(c => {
                 const activeCount = STATE.records.filter(r => String(r['รหัสครุภัณฑ์หลัก']).trim() === String(c['รหัสครุภัณฑ์']).trim() && String(r['สถานะ']).trim() === 'ใช้งาน').length;
-                tb.innerHTML += `<tr class="hover:bg-slate-50 border-b border-slate-100">
-                        <td class="p-2.5 font-bold text-slate-700">${esc(c['รหัสครุภัณฑ์'])}</td>
-                        <td class="p-2.5 font-medium text-slate-900">${esc(c['ชื่อครุภัณฑ์'])}</td>
-                        <td class="p-2.5 text-slate-600">${esc(c['ประเภทครุภัณฑ์']) || '-'}</td>
-                        <td class="p-2.5 text-center font-medium">${esc(c['อายุการใช้งาน'])} ปี</td>
-                        <td class="p-2.5 text-center text-teal-600 font-bold">${activeCount}</td>
-                        <td class="p-2.5 text-slate-600">${esc(c['หน่วยนับ']) || 'ชิ้น'}</td>
-                        <td class="p-2.5 text-center"><button onclick="delCatalog('${esc(c['รหัสครุภัณฑ์'])}')" class="text-red-500 hover:text-red-700 p-1.5 bg-red-50 rounded transition"><i class="fa-solid fa-trash"></i></button></td>
-                    </tr>`;
+                
+                // Card View Classes for <tr> and <td>
+                tb.innerHTML += `<tr class="block md:table-row bg-white md:hover:bg-slate-50 border-b-4 md:border-b border-slate-200 md:border-slate-100 mb-4 md:mb-0 rounded-xl md:rounded-none shadow-sm md:shadow-none overflow-hidden transition">
+                    <td class="block md:table-cell p-3 md:p-2.5 font-bold text-slate-700 bg-slate-50 md:bg-transparent border-b md:border-none border-slate-100 align-middle">
+                        <span class="md:hidden text-xs text-slate-500 font-normal mr-2">รหัสหลัก:</span>${esc(c['รหัสครุภัณฑ์'])}
+                    </td>
+                    <td class="block md:table-cell px-3 py-2 md:p-2.5 font-bold md:font-medium text-slate-900 text-base md:text-sm pt-3 md:pt-2.5 align-middle">
+                        <span class="md:hidden text-xs text-slate-500 font-normal mr-2 inline-block w-[75px]">ชื่อครุภัณฑ์:</span>${esc(c['ชื่อครุภัณฑ์'])}
+                    </td>
+                    <td class="hidden md:table-cell p-2.5 text-slate-600 align-middle">${esc(c['ประเภทครุภัณฑ์']) || '-'}</td>
+                    <td class="hidden md:table-cell p-2.5 text-center font-medium align-middle">${esc(c['อายุการใช้งาน'])} ปี</td>
+                    <td class="block md:table-cell px-3 py-1.5 md:p-2.5 text-left md:text-center text-teal-600 font-bold align-middle">
+                        <span class="md:hidden text-xs text-slate-500 font-normal mr-2 inline-block w-[75px]">คงเหลือ:</span>${activeCount} <span class="md:hidden text-slate-600 font-normal">${esc(c['หน่วยนับ']) || 'ชิ้น'}</span>
+                    </td>
+                    <td class="hidden md:table-cell p-2.5 text-slate-600 align-middle">${esc(c['หน่วยนับ']) || 'ชิ้น'}</td>
+                    <td class="block md:table-cell p-3 md:p-2.5 text-center border-t md:border-t-0 border-slate-100 mt-2 md:mt-0 align-middle">
+                        <button onclick="delCatalog('${esc(c['รหัสครุภัณฑ์'])}')" class="w-full md:w-auto text-red-500 hover:text-red-700 p-2 md:p-1.5 bg-red-50 hover:bg-red-100 rounded-lg transition font-bold text-sm">
+                            <i class="fa-solid fa-trash mr-1 md:mr-0"></i><span class="md:hidden">ลบหมวดหมู่</span>
+                        </button>
+                    </td>
+                </tr>`;
             });
             document.getElementById("cat-page-info").textContent = `หน้า ${PAGINATION.catalogPage} / ${maxPage} (รวม ${totalItems} ชนิด)`;
             document.getElementById("cat-prev-btn").disabled = (PAGINATION.catalogPage === 1);
@@ -824,8 +688,7 @@
 
         function renderRecords() {
             const tb = document.getElementById("records-tbody");
-            const list = FILTERED_RECORDS;
-            const totalItems = list.length;
+            const list = FILTERED_RECORDS; const totalItems = list.length;
             const maxPage = Math.ceil(totalItems / PAGINATION.recordsLimit) || 1;
             if (PAGINATION.recordsPage > maxPage) PAGINATION.recordsPage = maxPage;
             const startIdx = (PAGINATION.recordsPage - 1) * PAGINATION.recordsLimit;
@@ -835,13 +698,11 @@
 
             pageList.forEach(r => {
                 const parent = STATE.catalog.find(c => String(c['รหัสครุภัณฑ์']).trim() === String(r['รหัสครุภัณฑ์หลัก']).trim());
-                const parentCode = r['รหัสครุภัณฑ์หลัก'];
-                const parentName = parent ? parent['ชื่อครุภัณฑ์'] : '-';
-                const parentDisplay = `<div><span class="font-bold text-slate-700 text-xs">[${esc(parentCode)}]</span><br><span class="text-slate-500 truncate max-w-[150px] block" title="${esc(parentName)}">${esc(parentName)}</span></div>`;
+                const parentCode = r['รหัสครุภัณฑ์หลัก']; const parentName = parent ? parent['ชื่อครุภัณฑ์'] : '-';
+                const parentDisplay = `<div><span class="font-bold text-slate-700 text-xs">[${esc(parentCode)}]</span><br><span class="text-slate-500 truncate md:max-w-[150px] block" title="${esc(parentName)}">${esc(parentName)}</span></div>`;
                 const itemName = r['ชื่อรายการ'] || parentName;
 
-                let badgeClass = "bg-slate-200 text-slate-700";
-                const st = String(r['สถานะ']).trim();
+                let badgeClass = "bg-slate-200 text-slate-700"; const st = String(r['สถานะ']).trim();
                 if (st === 'ใช้งาน') badgeClass = "bg-green-100 text-green-700 border border-green-200";
                 if (st === 'รอจำหน่าย') badgeClass = "bg-amber-100 text-amber-700 border border-amber-200";
                 if (st === 'จำหน่ายแล้ว') badgeClass = "bg-red-100 text-red-700 border border-red-200";
@@ -853,44 +714,77 @@
 
                 let checkColumnHTML = '';
                 if (st === 'จำหน่ายแล้ว') {
-                    checkColumnHTML = `<div class="flex justify-center"><span class="inline-block px-3 py-1 bg-gray-200 text-gray-600 rounded-full text-[11px] font-bold border border-gray-300 shadow-sm"><i class="fa-solid fa-box-archive mr-1"></i> จำหน่ายแล้ว</span></div>`;
+                    checkColumnHTML = `<div class="flex justify-start md:justify-center"><span class="inline-block px-3 py-1 bg-gray-200 text-gray-600 rounded-full text-[11px] font-bold border border-gray-300 shadow-sm"><i class="fa-solid fa-box-archive mr-1"></i> จำหน่ายแล้ว</span></div>`;
                 } else {
                     const checkStatus = (r['การตรวจสอบ']) ? String(r['การตรวจสอบ']).trim() : 'ตรวจสอบแล้ว';
                     if (checkStatus === 'ไม่พบครุภัณฑ์') {
-                        checkColumnHTML = `<label class="flex items-center justify-center gap-1.5"><input type="checkbox" class="check-toggle check-toggle-notfound-checked" checked disabled><span class="font-bold text-[11px] text-red-600">ไม่พบครุภัณฑ์</span></label>`;
+                        checkColumnHTML = `<label class="flex items-center justify-start md:justify-center gap-1.5"><input type="checkbox" class="check-toggle check-toggle-notfound-checked" checked disabled><span class="font-bold text-[11px] text-red-600">ไม่พบครุภัณฑ์</span></label>`;
                     } else {
                         const isChecked = (checkStatus === 'ตรวจสอบแล้ว' || checkStatus === 'มี');
                         const displayStatus = isChecked ? 'ตรวจสอบแล้ว' : 'รอตรวจสอบ';
                         const checkColor = isChecked ? 'text-teal-600' : 'text-red-500';
+                        // ปรับให้ปุ่ม Checkbox เรียงแนวนอนบนมือถือ และเรียงแนวตั้งบน Desktop
                         checkColumnHTML = `
-                            <div class="flex flex-col items-center gap-1.5">
+                            <div class="flex flex-row md:flex-col items-center gap-3 md:gap-1.5">
                                 <label class="flex items-center justify-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity">
                                     <input type="checkbox" id="chk-${esc(displaySerial)}" class="check-toggle" onchange="handleCheckboxClick(this, '${safeSerial}', '${safeLocation}')" ${isChecked ? 'checked' : ''}>
                                     <span id="lbl-${esc(displaySerial)}" class="font-bold text-[11px] ${checkColor}">${displayStatus}</span>
                                 </label>
                                 <label class="flex items-center justify-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity" onclick="handleNotFoundClick('${safeSerial}', '${safeLocation}')">
                                     <input type="checkbox" class="check-toggle check-toggle-notfound" style="border-color:#fca5a5;" readonly>
-                                    <span class="font-bold text-[11px] text-red-500">ไม่พบครุภัณฑ์</span>
+                                    <span class="font-bold text-[11px] text-red-500">ไม่พบ</span>
                                 </label>
                             </div>`;
                     }
                 }
 
-                tb.innerHTML += `<tr class="hover:bg-slate-50 border-b border-slate-100">
-                        <td class="p-2.5 align-middle">${parentDisplay}</td>
-                        <td class="p-2.5 font-bold text-indigo-900 whitespace-nowrap align-middle">${esc(displaySerial)}</td>
-                        <td class="p-2.5 truncate max-w-[200px] align-middle font-medium text-slate-800" title="${esc(itemName)}">${esc(itemName)}</td>
-                        <td class="p-2.5 truncate max-w-[130px] align-middle text-slate-700">${esc(r['สถานที่เก็บ'])}</td>
-                        <td class="p-2.5 text-center align-middle"><span class="px-2 py-1 text-[11px] rounded-md font-bold whitespace-nowrap ${badgeClass}">${esc(st)}</span>${sellDateInfo}</td>
-                        <td class="p-2.5 text-center align-middle border-l border-slate-100 print-hide">${checkColumnHTML}</td>
-                        <td class="p-2.5 text-center print-hide align-middle">
-                            <div class="flex justify-center gap-1.5">
-                                <button onclick="viewDepreciation('${safeSerial}')" class="text-blue-600 hover:text-blue-800 p-1.5 bg-blue-50 rounded transition" title="คำนวณค่าเสื่อม"><i class="fa-solid fa-calculator"></i></button>
-                                <button onclick="openEditModal('${safeSerial}')" class="text-amber-600 hover:text-amber-800 p-1.5 bg-amber-50 rounded transition" title="แก้ไขครุภัณฑ์"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button onclick="delRecord('${safeSerial}')" class="text-red-600 hover:text-red-800 p-1.5 bg-red-50 rounded transition" title="ลบครุภัณฑ์"><i class="fa-solid fa-trash"></i></button>
-                            </div>
-                        </td>
-                    </tr>`;
+                // Card View Classes for <tr> and <td>
+                tb.innerHTML += `<tr class="block md:table-row bg-white md:hover:bg-slate-50 border-b-4 md:border-b border-slate-200 md:border-slate-100 mb-4 md:mb-0 rounded-xl md:rounded-none shadow-sm md:shadow-none overflow-hidden transition">
+                    
+                    <td class="block md:table-cell p-3 md:p-2.5 align-middle bg-slate-50 md:bg-transparent border-b md:border-b-0 border-slate-100">
+                        ${parentDisplay}
+                    </td>
+
+                    <td class="block md:table-cell px-3 py-1.5 md:p-2.5 font-bold text-indigo-900 whitespace-nowrap align-middle pt-3 md:pt-2.5">
+                        <span class="md:hidden text-xs text-slate-500 font-normal mr-2 inline-block w-[75px]">เลขครุภัณฑ์:</span>
+                        ${esc(displaySerial)}
+                    </td>
+
+                    <td class="block md:table-cell px-3 py-1.5 md:p-2.5 truncate md:max-w-[200px] align-middle font-medium text-slate-800" title="${esc(itemName)}">
+                        <span class="md:hidden text-xs text-slate-500 font-normal mr-2 inline-block w-[75px]">ชื่อรายการ:</span>
+                        ${esc(itemName)}
+                    </td>
+
+                    <td class="block md:table-cell px-3 py-1.5 md:p-2.5 truncate md:max-w-[130px] align-middle text-slate-700">
+                        <span class="md:hidden text-xs text-slate-500 font-normal mr-2 inline-block w-[75px]">สถานที่:</span>
+                        ${esc(r['สถานที่เก็บ'])}
+                    </td>
+
+                    <td class="block md:table-cell px-3 py-1.5 md:p-2.5 text-left md:text-center align-middle">
+                        <span class="md:hidden text-xs text-slate-500 font-normal mr-2 inline-block w-[75px]">สถานะ:</span>
+                        <span class="px-2 py-1 text-[11px] rounded-md font-bold whitespace-nowrap ${badgeClass}">${esc(st)}</span>
+                        <div class="inline-block md:block md:mt-1 ml-2 md:ml-0">${sellDateInfo}</div>
+                    </td>
+
+                    <td class="block md:table-cell px-3 py-2 md:p-2.5 text-left md:text-center align-middle md:border-l md:border-slate-100 print-hide bg-slate-50 md:bg-transparent mt-2 md:mt-0">
+                        <span class="md:hidden text-xs text-slate-500 font-normal mr-2 inline-block w-[75px]">ตรวจสอบ:</span>
+                        <div class="inline-block md:flex md:justify-center align-middle">${checkColumnHTML}</div>
+                    </td>
+
+                    <td class="block md:table-cell p-3 md:p-2.5 text-center print-hide align-middle border-t md:border-t-0 border-slate-100">
+                        <div class="flex justify-between md:justify-center gap-2">
+                            <button onclick="viewDepreciation('${safeSerial}')" class="flex-1 md:flex-none text-blue-600 hover:text-blue-800 py-2 px-1 md:p-1.5 bg-blue-50 hover:bg-blue-100 rounded-lg transition border border-blue-100 md:border-none" title="คำนวณค่าเสื่อม">
+                                <i class="fa-solid fa-calculator"></i><span class="md:hidden text-[11px] font-bold ml-1 block mt-1">ค่าเสื่อม</span>
+                            </button>
+                            <button onclick="openEditModal('${safeSerial}')" class="flex-1 md:flex-none text-amber-600 hover:text-amber-800 py-2 px-1 md:p-1.5 bg-amber-50 hover:bg-amber-100 rounded-lg transition border border-amber-100 md:border-none" title="แก้ไขครุภัณฑ์">
+                                <i class="fa-solid fa-pen-to-square"></i><span class="md:hidden text-[11px] font-bold ml-1 block mt-1">แก้ไข</span>
+                            </button>
+                            <button onclick="delRecord('${safeSerial}')" class="flex-1 md:flex-none text-red-600 hover:text-red-800 py-2 px-1 md:p-1.5 bg-red-50 hover:bg-red-100 rounded-lg transition border border-red-100 md:border-none" title="ลบครุภัณฑ์">
+                                <i class="fa-solid fa-trash"></i><span class="md:hidden text-[11px] font-bold ml-1 block mt-1">ลบ</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
             });
 
             document.getElementById("rec-page-info").textContent = `หน้า ${PAGINATION.recordsPage} / ${maxPage}`;
@@ -900,9 +794,6 @@
 
         function changeRecordsPage(offset) { PAGINATION.recordsPage += offset; renderRecords(); }
 
-        // =====================================================================
-        // FILTER & CRUD
-        // =====================================================================
         function handleRealtimeFilter() {
             const q = document.getElementById("filter-query").value.toLowerCase();
             const pCode = document.getElementById("filter-parent").value;
@@ -913,12 +804,10 @@
             FILTERED_RECORDS = STATE.records.filter(r => {
                 const parent = STATE.catalog.find(c => String(c['รหัสครุภัณฑ์']).trim() === String(r['รหัสครุภัณฑ์หลัก']).trim());
                 const pName = parent ? parent['ชื่อครุภัณฑ์'].toLowerCase() : '';
-                const rawSer = String(r['เลขครุภัณฑ์']).toLowerCase();
-                const itemStatus = String(r['สถานะ']).trim();
+                const rawSer = String(r['เลขครุภัณฑ์']).toLowerCase(); const itemStatus = String(r['สถานะ']).trim();
 
                 const matchQ = rawSer.includes(q) || pName.includes(q) || r['รหัสครุภัณฑ์หลัก'].toLowerCase().includes(q) ||
-                               (r['ชื่อรายการ'] && r['ชื่อรายการ'].toLowerCase().includes(q)) ||
-                               (r['ลักษณะขนาด'] && r['ลักษณะขนาด'].toLowerCase().includes(q));
+                               (r['ชื่อรายการ'] && r['ชื่อรายการ'].toLowerCase().includes(q)) || (r['ลักษณะขนาด'] && r['ลักษณะขนาด'].toLowerCase().includes(q));
                 const matchP = pCode === "" || String(r['รหัสครุภัณฑ์หลัก']).trim() === pCode;
                 const matchS = s === "" || itemStatus === s;
                 const matchL = l === "" || String(r['สถานที่เก็บ']).trim() === l;
@@ -938,10 +827,8 @@
         }
 
         function clearFilter() {
-            document.getElementById("filter-query").value = "";
-            document.getElementById("filter-parent").value = "";
-            document.getElementById("filter-status").value = "";
-            document.getElementById("filter-location").value = "";
+            document.getElementById("filter-query").value = ""; document.getElementById("filter-parent").value = "";
+            document.getElementById("filter-status").value = ""; document.getElementById("filter-location").value = "";
             if (document.getElementById("filter-audit")) document.getElementById("filter-audit").value = "";
             handleRealtimeFilter();
         }
@@ -949,17 +836,9 @@
         function handleCatalogSubmit(e) {
             e.preventDefault();
             if (!STATE.isAdmin) return Swal.fire("แจ้งเตือน", "กรุณาล็อกอินก่อนบันทึกข้อมูล", "warning");
-            const payload = {
-                action: "addCatalog", 'รหัสครุภัณฑ์': document.getElementById("cat-code").value.trim(),
-                'ชื่อครุภัณฑ์': document.getElementById("cat-name").value.trim(),
-                'ประเภทครุภัณฑ์': document.getElementById("cat-type-select").value,
-                'อายุการใช้งาน': document.getElementById("cat-lifespan").value,
-                'จำนวนคงเหลือ': 0, 'หน่วยนับ': document.getElementById("cat-unit").value.trim()
-            };
+            const payload = { action: "addCatalog", 'รหัสครุภัณฑ์': document.getElementById("cat-code").value.trim(), 'ชื่อครุภัณฑ์': document.getElementById("cat-name").value.trim(), 'ประเภทครุภัณฑ์': document.getElementById("cat-type-select").value, 'อายุการใช้งาน': document.getElementById("cat-lifespan").value, 'จำนวนคงเหลือ': 0, 'หน่วยนับ': document.getElementById("cat-unit").value.trim() };
             if (STATE.catalog.find(c => String(c['รหัสครุภัณฑ์']).trim() === payload['รหัสครุภัณฑ์'])) { return Swal.fire("ผิดพลาด", "รหัสหลักนี้มีอยู่ในระบบแล้ว", "error"); }
-            STATE.catalog.unshift(payload); FILTERED_CATALOG = [...STATE.catalog];
-            renderCatalog(); postData(payload); e.target.reset(); toggleAddCatalogModal();
-            Swal.fire("สำเร็จ", "เพิ่มสารบัญหลักเรียบร้อย", "success");
+            STATE.catalog.unshift(payload); FILTERED_CATALOG = [...STATE.catalog]; renderCatalog(); postData(payload); e.target.reset(); toggleAddCatalogModal(); Swal.fire("สำเร็จ", "เพิ่มสารบัญหลักเรียบร้อย", "success");
         }
 
         function handleRecordSubmit(e) {
@@ -967,90 +846,46 @@
             if (!STATE.isAdmin) return Swal.fire("แจ้งเตือน", "กรุณาล็อกอินก่อนบันทึกข้อมูล", "warning");
             const newSerial = document.getElementById("rec-serial").value.trim();
             if (STATE.records.some(r => String(r['เลขครุภัณฑ์']).trim() === newSerial)) { return Swal.fire("เลขครุภัณฑ์ซ้ำ!", `เลขครุภัณฑ์ [${newSerial}] ถูกใช้งานในระบบไปแล้ว`, "error"); }
-            const payload = {
-                action: "addRecord", 'รหัสครุภัณฑ์หลัก': document.getElementById("rec-parent-select").value,
-                'วันที่ได้มา': document.getElementById("rec-date").value, 'ราคาต่อหน่วย': document.getElementById("rec-price").value,
-                'เลขครุภัณฑ์': newSerial, 'สถานที่เก็บ': document.getElementById("rec-location").value.trim(),
-                'สถานะ': document.getElementById("rec-status").value, 'ชื่อรายการ': document.getElementById("rec-name").value.trim(),
-                'ลักษณะขนาด': document.getElementById("rec-desc").value.trim(), 'รหัส GFMIS': document.getElementById("rec-gfmis").value.trim(),
-                'ประเภทเงิน': document.getElementById("rec-money-type").value, 'วิธีการที่ได้มา': document.getElementById("rec-method").value,
-                'เอกสารอ้างอิง': document.getElementById("rec-ref-doc").value.trim(), 'วันที่จำหน่าย': '', 'การตรวจสอบ': 'ตรวจสอบแล้ว'
-            };
-            STATE.records.unshift(payload); FILTERED_RECORDS = [...STATE.records];
-            renderRecords(); postData(payload); e.target.reset();
-            const serialInput = document.getElementById("rec-serial");
-            serialInput.style.borderColor = ""; serialInput.style.boxShadow = "";
-            document.getElementById("serial-hint").textContent = "";
-            toggleAddRecordModal(); Swal.fire("สำเร็จ", "เพิ่มรายชิ้นเรียบร้อย", "success");
+            const payload = { action: "addRecord", 'รหัสครุภัณฑ์หลัก': document.getElementById("rec-parent-select").value, 'วันที่ได้มา': document.getElementById("rec-date").value, 'ราคาต่อหน่วย': document.getElementById("rec-price").value, 'เลขครุภัณฑ์': newSerial, 'สถานที่เก็บ': document.getElementById("rec-location").value.trim(), 'สถานะ': document.getElementById("rec-status").value, 'ชื่อรายการ': document.getElementById("rec-name").value.trim(), 'ลักษณะขนาด': document.getElementById("rec-desc").value.trim(), 'รหัส GFMIS': document.getElementById("rec-gfmis").value.trim(), 'ประเภทเงิน': document.getElementById("rec-money-type").value, 'วิธีการที่ได้มา': document.getElementById("rec-method").value, 'เอกสารอ้างอิง': document.getElementById("rec-ref-doc").value.trim(), 'วันที่จำหน่าย': '', 'การตรวจสอบ': 'ตรวจสอบแล้ว' };
+            STATE.records.unshift(payload); FILTERED_RECORDS = [...STATE.records]; renderRecords(); postData(payload); e.target.reset();
+            const serialInput = document.getElementById("rec-serial"); serialInput.style.borderColor = ""; serialInput.style.boxShadow = ""; document.getElementById("serial-hint").textContent = ""; toggleAddRecordModal(); Swal.fire("สำเร็จ", "เพิ่มรายชิ้นเรียบร้อย", "success");
         }
 
         function openEditModal(serial) {
             if (!STATE.isAdmin) return Swal.fire("แจ้งเตือน", "กรุณาล็อกอินแอดมินก่อน", "warning");
-            const rawSerial = String(serial).trim();
-            const r = STATE.records.find(x => String(x['เลขครุภัณฑ์']).trim() === rawSerial);
+            const rawSerial = String(serial).trim(); const r = STATE.records.find(x => String(x['เลขครุภัณฑ์']).trim() === rawSerial);
             if (!r) return;
-            document.getElementById("edit-old-serial").value = rawSerial;
-            document.getElementById("edit-parent").value = r['รหัสครุภัณฑ์หลัก'];
-            document.getElementById("edit-name").value = r['ชื่อรายการ'] || '';
-            document.getElementById("edit-desc").value = r['ลักษณะขนาด'] || '';
+            document.getElementById("edit-old-serial").value = rawSerial; document.getElementById("edit-parent").value = r['รหัสครุภัณฑ์หลัก'];
+            document.getElementById("edit-name").value = r['ชื่อรายการ'] || ''; document.getElementById("edit-desc").value = r['ลักษณะขนาด'] || '';
             document.getElementById("edit-check-status").value = r['การตรวจสอบ'] || 'ตรวจสอบแล้ว';
-            try { const d = new Date(r['วันที่ได้มา']); document.getElementById("edit-date").value = d.toISOString().split('T')[0]; }
-            catch (e) { document.getElementById("edit-date").value = r['วันที่ได้มา']; }
-            document.getElementById("edit-price").value = r['ราคาต่อหน่วย'];
-            document.getElementById("edit-serial").value = rawSerial;
-            document.getElementById("edit-location").value = r['สถานที่เก็บ'];
-            document.getElementById("edit-status").value = String(r['สถานะ']).trim();
-            document.getElementById("edit-gfmis").value = r['รหัส GFMIS'] || '';
-            document.getElementById("edit-money-type").value = r['ประเภทเงิน'] || 'งบประมาณ';
-            document.getElementById("edit-method").value = r['วิธีการที่ได้มา'] || 'ตกลงราคา';
-            document.getElementById("edit-ref-doc").value = r['เอกสารอ้างอิง'] || '';
-            if (r['วันที่จำหน่าย']) {
-                try { const d2 = new Date(r['วันที่จำหน่าย']); document.getElementById("edit-disposal-date").value = d2.toISOString().split('T')[0]; }
-                catch (e) { document.getElementById("edit-disposal-date").value = r['วันที่จำหน่าย']; }
-            } else { document.getElementById("edit-disposal-date").value = ""; }
+            try { const d = new Date(r['วันที่ได้มา']); document.getElementById("edit-date").value = d.toISOString().split('T')[0]; } catch (e) { document.getElementById("edit-date").value = r['วันที่ได้มา']; }
+            document.getElementById("edit-price").value = r['ราคาต่อหน่วย']; document.getElementById("edit-serial").value = rawSerial;
+            document.getElementById("edit-location").value = r['สถานที่เก็บ']; document.getElementById("edit-status").value = String(r['สถานะ']).trim();
+            document.getElementById("edit-gfmis").value = r['รหัส GFMIS'] || ''; document.getElementById("edit-money-type").value = r['ประเภทเงิน'] || 'งบประมาณ';
+            document.getElementById("edit-method").value = r['วิธีการที่ได้มา'] || 'ตกลงราคา'; document.getElementById("edit-ref-doc").value = r['เอกสารอ้างอิง'] || '';
+            if (r['วันที่จำหน่าย']) { try { const d2 = new Date(r['วันที่จำหน่าย']); document.getElementById("edit-disposal-date").value = d2.toISOString().split('T')[0]; } catch (e) { document.getElementById("edit-disposal-date").value = r['วันที่จำหน่าย']; } } else { document.getElementById("edit-disposal-date").value = ""; }
             handleEditStatusChange(); toggleEditModal();
         }
 
         function submitEdit(e) {
             e.preventDefault();
-            const btn = document.getElementById("save-edit-btn");
-            btn.disabled = true; btn.textContent = "กำลังบันทึก...";
-            const oldSerial = String(document.getElementById("edit-old-serial").value).trim();
-            const newSerial = String(document.getElementById("edit-serial").value).trim();
-            if (newSerial !== oldSerial && STATE.records.some(r => String(r['เลขครุภัณฑ์']).trim() === newSerial)) {
-                btn.disabled = false; btn.textContent = "บันทึกการแก้ไข";
-                return Swal.fire("เลขครุภัณฑ์ซ้ำ!", `ไม่สามารถเปลี่ยนเป็นเลข [${newSerial}] ได้`, "error");
-            }
-            const payload = {
-                action: "editRecord", oldSerial: oldSerial,
-                'รหัสครุภัณฑ์หลัก': document.getElementById("edit-parent").value, 'วันที่ได้มา': document.getElementById("edit-date").value,
-                'ราคาต่อหน่วย': document.getElementById("edit-price").value, 'เลขครุภัณฑ์': newSerial,
-                'สถานที่เก็บ': document.getElementById("edit-location").value.trim(), 'สถานะ': document.getElementById("edit-status").value,
-                'ชื่อรายการ': document.getElementById("edit-name").value.trim(), 'ลักษณะขนาด': document.getElementById("edit-desc").value.trim(),
-                'การตรวจสอบ': document.getElementById("edit-check-status").value, 'รหัส GFMIS': document.getElementById("edit-gfmis").value.trim(),
-                'ประเภทเงิน': document.getElementById("edit-money-type").value, 'วิธีการที่ได้มา': document.getElementById("edit-method").value,
-                'เอกสารอ้างอิง': document.getElementById("edit-ref-doc").value.trim(), 'วันที่จำหน่าย': document.getElementById("edit-disposal-date").value
-            };
-            STATE.records = STATE.records.filter(x => String(x['เลขครุภัณฑ์']).trim() !== oldSerial);
-            STATE.records.unshift(payload); FILTERED_RECORDS = [...STATE.records];
-            toggleEditModal(); renderRecords(); postData(payload);
-            Swal.fire("สำเร็จ", "แก้ไขข้อมูลเรียบร้อยแล้ว", "success");
-            setTimeout(() => { btn.disabled = false; btn.textContent = "บันทึกการแก้ไข"; }, 1000);
+            const btn = document.getElementById("save-edit-btn"); btn.disabled = true; btn.textContent = "กำลังบันทึก...";
+            const oldSerial = String(document.getElementById("edit-old-serial").value).trim(); const newSerial = String(document.getElementById("edit-serial").value).trim();
+            if (newSerial !== oldSerial && STATE.records.some(r => String(r['เลขครุภัณฑ์']).trim() === newSerial)) { btn.disabled = false; btn.textContent = "บันทึกการแก้ไข"; return Swal.fire("เลขครุภัณฑ์ซ้ำ!", `ไม่สามารถเปลี่ยนเป็นเลข [${newSerial}] ได้`, "error"); }
+            const payload = { action: "editRecord", oldSerial: oldSerial, 'รหัสครุภัณฑ์หลัก': document.getElementById("edit-parent").value, 'วันที่ได้มา': document.getElementById("edit-date").value, 'ราคาต่อหน่วย': document.getElementById("edit-price").value, 'เลขครุภัณฑ์': newSerial, 'สถานที่เก็บ': document.getElementById("edit-location").value.trim(), 'สถานะ': document.getElementById("edit-status").value, 'ชื่อรายการ': document.getElementById("edit-name").value.trim(), 'ลักษณะขนาด': document.getElementById("edit-desc").value.trim(), 'การตรวจสอบ': document.getElementById("edit-check-status").value, 'รหัส GFMIS': document.getElementById("edit-gfmis").value.trim(), 'ประเภทเงิน': document.getElementById("edit-money-type").value, 'วิธีการที่ได้มา': document.getElementById("edit-method").value, 'เอกสารอ้างอิง': document.getElementById("edit-ref-doc").value.trim(), 'วันที่จำหน่าย': document.getElementById("edit-disposal-date").value };
+            STATE.records = STATE.records.filter(x => String(x['เลขครุภัณฑ์']).trim() !== oldSerial); STATE.records.unshift(payload); FILTERED_RECORDS = [...STATE.records];
+            toggleEditModal(); renderRecords(); postData(payload); Swal.fire("สำเร็จ", "แก้ไขข้อมูลเรียบร้อยแล้ว", "success"); setTimeout(() => { btn.disabled = false; btn.textContent = "บันทึกการแก้ไข"; }, 1000);
         }
 
         function handleEditStatusChange() {
-            const status = document.getElementById("edit-status").value;
-            const disposalBox = document.getElementById("edit-disposal-container");
+            const status = document.getElementById("edit-status").value; const disposalBox = document.getElementById("edit-disposal-container");
             if (status === 'จำหน่ายแล้ว') { disposalBox.classList.remove("hidden"); } else { disposalBox.classList.add("hidden"); document.getElementById("edit-disposal-date").value = ""; }
         }
 
         function delCatalog(code) {
             if (!STATE.isAdmin) return Swal.fire("แจ้งเตือน", "กรุณาล็อกอินแอดมินก่อน", "warning");
             Swal.fire({ title: "ยืนยันการลบสารบัญ?", text: "ลบแล้วจะไม่สามารถย้อนกลับได้", icon: "warning", showCancelButton: true }).then(r => {
-                if (r.isConfirmed) {
-                    STATE.catalog = STATE.catalog.filter(c => String(c['รหัสครุภัณฑ์']).trim() !== String(code).trim());
-                    FILTERED_CATALOG = [...STATE.catalog]; renderCatalog(); postData({ action: "deleteCatalog", code: code });
-                }
+                if (r.isConfirmed) { STATE.catalog = STATE.catalog.filter(c => String(c['รหัสครุภัณฑ์']).trim() !== String(code).trim()); FILTERED_CATALOG = [...STATE.catalog]; renderCatalog(); postData({ action: "deleteCatalog", code: code }); }
             });
         }
 
@@ -1058,10 +893,7 @@
             if (!STATE.isAdmin) return Swal.fire("แจ้งเตือน", "กรุณาล็อกอินแอดมินก่อน", "warning");
             const rawSerial = String(serial).trim();
             Swal.fire({ title: "ลบครุภัณฑ์ชิ้นนี้?", text: `ต้องการลบเลข ${rawSerial} ใช่หรือไม่?`, icon: "warning", showCancelButton: true }).then(r => {
-                if (r.isConfirmed) {
-                    STATE.records = STATE.records.filter(c => String(c['เลขครุภัณฑ์']).trim() !== rawSerial);
-                    FILTERED_RECORDS = [...STATE.records]; renderRecords(); postData({ action: "deleteRecord", serialNumber: rawSerial });
-                }
+                if (r.isConfirmed) { STATE.records = STATE.records.filter(c => String(c['เลขครุภัณฑ์']).trim() !== rawSerial); FILTERED_RECORDS = [...STATE.records]; renderRecords(); postData({ action: "deleteRecord", serialNumber: rawSerial }); }
             });
         }
 
@@ -1075,19 +907,13 @@
         }
 
         function viewDepreciation(serial) {
-            const rawSerial = String(serial).trim();
-            const r = STATE.records.find(x => String(x['เลขครุภัณฑ์']).trim() === rawSerial);
+            const rawSerial = String(serial).trim(); const r = STATE.records.find(x => String(x['เลขครุภัณฑ์']).trim() === rawSerial);
             if (!r) return;
             const p = STATE.catalog.find(c => String(c['รหัสครุภัณฑ์']).trim() === String(r['รหัสครุภัณฑ์หลัก']).trim());
             if (!p) return Swal.fire("ผิดพลาด", "ไม่พบข้อมูลหมวดหมู่หลัก", "error");
-            const price = Number(r['ราคาต่อหน่วย']);
-            const buyDate = new Date(r['วันที่ได้มา']);
-            const today = new Date();
-            const status = String(r['สถานะ']).trim();
-            let yearsUsed = (today - buyDate) / (1000 * 60 * 60 * 24 * 365.25);
-            if (yearsUsed < 0) yearsUsed = 0;
-            const lifespan = Number(p['อายุการใช้งาน']) || 5;
-            const depPerYear = (price > 1) ? (price - 1) / lifespan : 0;
+            const price = Number(r['ราคาต่อหน่วย']); const buyDate = new Date(r['วันที่ได้มา']); const today = new Date(); const status = String(r['สถานะ']).trim();
+            let yearsUsed = (today - buyDate) / (1000 * 60 * 60 * 24 * 365.25); if (yearsUsed < 0) yearsUsed = 0;
+            const lifespan = Number(p['อายุการใช้งาน']) || 5; const depPerYear = (price > 1) ? (price - 1) / lifespan : 0;
             let accumDep = depPerYear * yearsUsed; let netValue = price - accumDep;
             if (status === 'จำหน่ายแล้ว') { netValue = 0; accumDep = price; } else if (netValue < 1 || yearsUsed >= lifespan) { netValue = 1; accumDep = price - 1; }
             Swal.fire({
@@ -1099,13 +925,13 @@
                         <hr class="my-2 border-slate-200">
                         <p><i class="fa-solid fa-calendar-days text-slate-500 w-5"></i> <b>วันที่ได้มา:</b> ${formatDateDisplay(r['วันที่ได้มา'])}</p>
                         <p><i class="fa-solid fa-coins text-slate-500 w-5"></i> <b>ราคาทุน:</b> ${price.toLocaleString('th-TH')} บาท</p>
-                        <p><i class="fa-solid fa-clock-rotate-left text-slate-500 w-5"></i> <b>อายุใช้งานตามเกณฑ์:</b> ${lifespan} ปี (ใช้มาแล้ว ${yearsUsed.toFixed(2)} ปี)</p>
+                        <p><i class="fa-solid fa-clock-rotate-left text-slate-500 w-5"></i> <b>อายุใช้งาน:</b> ${lifespan} ปี (ใช้มาแล้ว ${yearsUsed.toFixed(2)} ปี)</p>
                         <hr class="my-2 border-slate-200">
                         <div class="bg-white p-2.5 rounded border border-red-100">
-                            <p class="text-red-500 flex justify-between"><span>ค่าเสื่อมราคาสะสม:</span> <b>- ${accumDep.toLocaleString('th-TH', { maximumFractionDigits: 2 })} ฿</b></p>
+                            <p class="text-red-500 flex justify-between"><span>ค่าเสื่อมสะสม:</span> <b>- ${accumDep.toLocaleString('th-TH', { maximumFractionDigits: 2 })} ฿</b></p>
                         </div>
                         <div class="bg-green-50 p-2.5 rounded border border-green-200 mt-2">
-                            <p class="text-green-700 font-bold flex justify-between items-center" style="font-size: 16px !important;"><span>มูลค่าคงเหลือสุทธิ:</span> <b>${netValue.toLocaleString('th-TH', { maximumFractionDigits: 2 })} ฿</b></p>
+                            <p class="text-green-700 font-bold flex justify-between items-center" style="font-size: 16px !important;"><span>มูลค่าคงเหลือ:</span> <b>${netValue.toLocaleString('th-TH', { maximumFractionDigits: 2 })} ฿</b></p>
                         </div>
                     </div>`, confirmButtonColor: '#4f46e5', confirmButtonText: 'ปิดหน้าต่าง'
             });
@@ -1137,8 +963,7 @@
                 const activeCount = STATE.records.filter(r => String(r['รหัสครุภัณฑ์หลัก']).trim() === String(c['รหัสครุภัณฑ์']).trim() && String(r['สถานะ']).trim() === 'ใช้งาน').length;
                 csv += `"${c['รหัสครุภัณฑ์']}","${c['ชื่อครุภัณฑ์']}","${c['ประเภทครุภัณฑ์'] || ''}","${c['อายุการใช้งาน']}","${activeCount}","${c['หน่วยนับ'] || ''}"\n`;
             });
-            const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" }));
-            link.download = "สารบัญประเภทหลักครุภัณฑ์.csv"; link.click();
+            const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" })); link.download = "สารบัญประเภทหลักครุภัณฑ์.csv"; link.click();
         }
 
         function exportToExcel() {
@@ -1149,8 +974,7 @@
                 let excelStatus = chkStatus === 'ไม่พบครุภัณฑ์' ? 'ไม่พบครุภัณฑ์' : ((chkStatus === 'ตรวจสอบแล้ว' || chkStatus === 'มี') ? 'ตรวจสอบแล้ว' : 'รอตรวจสอบ');
                 csv += `"${r['รหัสครุภัณฑ์หลัก']}","${formatDateDisplay(r['วันที่ได้มา'])}","${String(r['เลขครุภัณฑ์']).trim()}","${r['ชื่อรายการ'] || ''}","${r['ลักษณะขนาด'] || ''}","${r['ราคาต่อหน่วย']}","${r['สถานที่เก็บ']}","${r['สถานะ']}","${formatDateDisplay(r['วันที่จำหน่าย'])}","${r['ประเภทเงิน'] || ''}","${r['วิธีการที่ได้มา'] || ''}","${excelStatus}","${r['รหัส GFMIS'] || ''}","${r['เอกสารอ้างอิง'] || ''}"\n`;
             });
-            const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" }));
-            link.download = "ทะเบียนทรัพย์สินรายชิ้น.csv"; link.click();
+            const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" })); link.download = "ทะเบียนทรัพย์สินรายชิ้น.csv"; link.click();
         }
     </script>
 </body>

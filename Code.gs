@@ -1,15 +1,14 @@
 // ======================================================================
 // Code.gs — Google Apps Script สำหรับระบบทะเบียนคุมทรัพย์สิน
 // โรงเรียนวัดแสงสรรค์
-//
-// วิธีใช้: นำโค้ดนี้ไปวางใน Google Apps Script แล้ว Deploy เป็น Web App
-// ตั้งค่า: Execute as "Me", Who has access "Anyone"
 // ======================================================================
 
 const SHEET_ID = '1ZU2qByqg50fspEtV2n-ZPkXIEokHIvxQIOGX3_PdjNQ';
 
+// 👇 ใส่ ID โฟลเดอร์ Google Drive ที่เปิดแชร์สาธารณะ (Anyone with link) ไว้แล้ว
+const IMAGE_FOLDER_ID = '1XkXNNNiwUvzyks6aGoUweMGpWGndxfDw'; 
+
 function doGet(e) {
-  // ถ้าไม่มี action → แสดงหน้าเว็บ (สำหรับ GAS Hosted เท่านั้น, Vercel ไม่ใช้ส่วนนี้)
   if (!e.parameter.action) {
     return HtmlService.createTemplateFromFile('Index')
         .evaluate()
@@ -97,6 +96,12 @@ function doPost(e) {
     else if (action === 'addRecord') {
       const parentCode = params['รหัสครุภัณฑ์หลัก'];
       let targetSheet = getOrCreateSheet(ss, parentCode);
+      
+      let imageUrl = '';
+      if (params.imageB64 && IMAGE_FOLDER_ID !== 'ใส่_ID_โฟลเดอร์_Drive_ที่นี่') {
+        imageUrl = saveImageToDrive(params.imageB64, params.imageMime, params['เลขครุภัณฑ์'].replace(/\//g, '-') + "_" + new Date().getTime());
+      }
+
       targetSheet.appendRow([
         "'" + parentCode,
         params['วันที่ได้มา'],
@@ -111,7 +116,8 @@ function doPost(e) {
         params['วิธีการที่ได้มา'] || '',
         params['การตรวจสอบ'] || 'ตรวจสอบแล้ว',
         params['รหัส GFMIS'] || '',
-        params['เอกสารอ้างอิง'] || ''
+        params['เอกสารอ้างอิง'] || '',
+        imageUrl // เพิ่มคอลัมน์เก็บ URL รูปภาพ
       ]);
       return createResponse({ status: 'success' });
     }
@@ -119,6 +125,12 @@ function doPost(e) {
       deleteRecordFromAllSheets(ss, params['oldSerial']);
       const parentCode = params['รหัสครุภัณฑ์หลัก'];
       let targetSheet = getOrCreateSheet(ss, parentCode);
+      
+      let imageUrl = params['existingImageUrl'] || '';
+      if (params.imageB64 && IMAGE_FOLDER_ID !== 'ใส่_ID_โฟลเดอร์_Drive_ที่นี่') {
+        imageUrl = saveImageToDrive(params.imageB64, params.imageMime, params['เลขครุภัณฑ์'].replace(/\//g, '-') + "_" + new Date().getTime());
+      }
+
       targetSheet.appendRow([
         "'" + parentCode,
         params['วันที่ได้มา'],
@@ -133,7 +145,8 @@ function doPost(e) {
         params['วิธีการที่ได้มา'] || '',
         params['การตรวจสอบ'] || 'ตรวจสอบแล้ว',
         params['รหัส GFMIS'] || '',
-        params['เอกสารอ้างอิง'] || ''
+        params['เอกสารอ้างอิง'] || '',
+        imageUrl // เพิ่มคอลัมน์เก็บ URL รูปภาพ
       ]);
       return createResponse({ status: 'success' });
     }
@@ -199,6 +212,23 @@ function doPost(e) {
 // Helper Functions
 // =====================================================================
 
+function saveImageToDrive(base64Data, mimeType, fileName) {
+  try {
+    if (!base64Data) return '';
+    const folder = DriveApp.getFolderById(IMAGE_FOLDER_ID);
+    // ตัดส่วน header data:image/jpeg;base64, ออก
+    const data = base64Data.split(',')[1];
+    const blob = Utilities.newBlob(Utilities.base64Decode(data), mimeType, fileName);
+    const file = folder.createFile(blob);
+    // ให้สามารถอ่านไฟล์ได้ผ่าน URL
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    return file.getUrl();
+  } catch (e) {
+    console.log("Error saving image: " + e.toString());
+    return '';
+  }
+}
+
 function setupCatalogSheet(ss) {
   if (!ss.getSheetByName('AssetCatalog')) {
     const s = ss.insertSheet('AssetCatalog');
@@ -210,7 +240,8 @@ function getOrCreateSheet(ss, sheetName) {
   let sheet = ss.getSheetByName(sheetName);
   if (!sheet) {
     sheet = ss.insertSheet(sheetName);
-    sheet.appendRow(['รหัสครุภัณฑ์หลัก', 'วันที่ได้มา', 'เลขครุภัณฑ์', 'ชื่อรายการ', 'ลักษณะขนาด', 'ราคาต่อหน่วย', 'สถานที่เก็บ', 'สถานะ', 'วันที่จำหน่าย', 'ประเภทเงิน', 'วิธีการที่ได้มา', 'การตรวจสอบ', 'รหัส GFMIS', 'เอกสารอ้างอิง']);
+    // เพิ่มคอลัมน์ URL รูปภาพ
+    sheet.appendRow(['รหัสครุภัณฑ์หลัก', 'วันที่ได้มา', 'เลขครุภัณฑ์', 'ชื่อรายการ', 'ลักษณะขนาด', 'ราคาต่อหน่วย', 'สถานที่เก็บ', 'สถานะ', 'วันที่จำหน่าย', 'ประเภทเงิน', 'วิธีการที่ได้มา', 'การตรวจสอบ', 'รหัส GFMIS', 'เอกสารอ้างอิง', 'URL รูปภาพ']);
   }
   return sheet;
 }

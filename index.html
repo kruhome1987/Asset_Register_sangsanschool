@@ -1,3 +1,4 @@
+html:index.html
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -24,7 +25,6 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         
-        /* ขยายขนาด Checkbox สำหรับจอมือถือ */
         .check-toggle { appearance: none; width: 22px; height: 22px; border: 2px solid #cbd5e1; border-radius: 4px; cursor: pointer; outline: none; position: relative; transition: all 0.2s; background-color: white;}
         .check-toggle:checked { background-color: #0d9488; border-color: #0d9488; }
         .check-toggle:checked::after { content: "\2714"; position: absolute; color: white; font-size: 13px; font-weight: bold; top: 50%; left: 50%; transform: translate(-50%, -50%); }
@@ -34,7 +34,6 @@
         .check-toggle-notfound-checked { background-color: #ef4444 !important; border-color: #ef4444 !important; }
         .check-toggle-notfound-checked:checked { background-color: #ef4444 !important; border-color: #ef4444 !important; }
 
-        /* CSS สำหรับปุ่มนำทาง (Circle Expand) */
         .btn--circle-expand {
             position: relative;
             display: inline-flex; align-items: center; justify-content: flex-start;
@@ -96,7 +95,6 @@
 
     <main class="max-w-[1400px] mx-auto p-4 flex-grow w-full space-y-5">
         
-        <!-- แถบการดำเนินการ และ เมนูลัดเปลี่ยนหน้าเว็บ -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 flex flex-col xl:flex-row items-center justify-between gap-5">
             <div class="flex items-center gap-3 w-full xl:w-auto">
                 <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 text-lg shrink-0"><i class="fa-solid fa-cloud-arrow-down"></i></div>
@@ -242,6 +240,7 @@
         </div>
     </div>
 
+    <!-- Modal เพิ่มรายชิ้น -->
     <div id="add-record-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[100] flex">
         <div class="bg-white rounded-2xl p-5 w-full max-w-lg relative shadow-2xl border-t-4 border-t-indigo-500 overflow-y-auto max-h-[90vh] custom-scrollbar">
             <button onclick="toggleAddRecordModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -294,12 +293,20 @@
                         </div>
                     </div>
                     <input type="text" id="rec-ref-doc" placeholder="เอกสารอ้างอิง (จัดซื้อชุดที่/ได้มาจาก)" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:border-indigo-400">
+                    
+                    <!-- เพิ่มส่วนอัปโหลดรูปภาพ -->
+                    <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100">
+                        <label class="text-xs font-bold text-indigo-700 block mb-1"><i class="fa-solid fa-camera"></i> อัปโหลดภาพครุภัณฑ์ (ถ้ามี)</label>
+                        <input type="file" id="rec-image" accept="image/*" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 transition">
+                        <img id="rec-image-preview" class="hidden mt-2 max-h-32 rounded-lg border border-slate-200 object-cover shadow-sm mx-auto" />
+                    </div>
                 </div>
-                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 mt-2 rounded-lg transition shadow-md">บันทึกรายชิ้น</button>
+                <button type="submit" id="submit-record-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 mt-2 rounded-lg transition shadow-md">บันทึกรายชิ้น</button>
             </form>
         </div>
     </div>
 
+    <!-- Modal แก้ไขข้อมูล -->
     <div id="edit-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[100] flex">
         <div class="bg-white rounded-2xl p-5 w-full max-w-lg relative shadow-2xl border-t-4 border-t-amber-400 overflow-y-auto max-h-[90vh] custom-scrollbar">
             <button onclick="toggleEditModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -369,6 +376,15 @@
                         <label class="text-[11px] font-bold text-slate-500">เอกสารอ้างอิง (จัดซื้อชุดที่/ได้มาจาก)</label>
                         <input type="text" id="edit-ref-doc" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg">
                     </div>
+
+                    <!-- เพิ่มส่วนอัปโหลดแก้ไขรูปภาพ -->
+                    <div class="bg-amber-50 p-3 rounded-lg border border-amber-100">
+                        <label class="text-[11px] font-bold text-amber-700 block mb-1"><i class="fa-solid fa-camera"></i> อัปเดตภาพครุภัณฑ์ (เลือกไฟล์ใหม่เพื่อเปลี่ยน)</label>
+                        <input type="hidden" id="edit-existing-image">
+                        <input type="file" id="edit-image" accept="image/*" class="w-full text-sm text-slate-500 file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-amber-200 file:text-amber-800 hover:file:bg-amber-300 transition">
+                        <img id="edit-image-preview" class="hidden mt-2 max-h-32 rounded-lg border border-slate-200 object-cover shadow-sm mx-auto" />
+                    </div>
+
                 </div>
                 <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 mt-2 rounded-lg transition shadow-md" id="save-edit-btn">บันทึกการแก้ไข</button>
             </form>
@@ -391,7 +407,6 @@
     </footer>
 
     <script>
-        // JS Logic 
         const OBEC_CATEGORIES = [
           { title: "1. อาคาร", lifespan: 25, rate: "4%" },
           { title: "2. อาคารชั่วคราว / โรงเรือน", lifespan: 10, rate: "10%" },
@@ -446,6 +461,69 @@
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;');
         }
 
+        // ฟังก์ชันบีบอัดรูปภาพด้วย HTML5 Canvas (ป้องกันไฟล์ใหญ่เกินไป)
+        function compressImage(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function (e) {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = function () {
+                        const canvas = document.createElement("canvas");
+                        const MAX_WIDTH = 800; // กำหนดความกว้างสูงสุด 800px
+                        const MAX_HEIGHT = 800;
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > height) {
+                            if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                        } else {
+                            if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext("2d");
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL("image/jpeg", 0.7)); // บีบอัดเหลือ Quality 70%
+                    };
+                    img.onerror = (err) => reject(err);
+                };
+                reader.onerror = (err) => reject(err);
+            });
+        }
+
+        // แสดงพรีวิวรูปภาพก่อนบันทึก
+        document.getElementById('rec-image').addEventListener('change', async function(e) {
+            if(e.target.files[0]) {
+                const base64 = await compressImage(e.target.files[0]);
+                const preview = document.getElementById('rec-image-preview');
+                preview.src = base64;
+                preview.classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('edit-image').addEventListener('change', async function(e) {
+            if(e.target.files[0]) {
+                const base64 = await compressImage(e.target.files[0]);
+                const preview = document.getElementById('edit-image-preview');
+                preview.src = base64;
+                preview.classList.remove('hidden');
+            }
+        });
+
+        // ฟังก์ชันดูรูปภาพขยายใหญ่ (SweetAlert)
+        function viewImage(url) {
+            Swal.fire({
+                imageUrl: url,
+                imageAlt: 'ภาพครุภัณฑ์',
+                width: 600,
+                showConfirmButton: true,
+                confirmButtonText: 'ปิดหน้าต่าง',
+                confirmButtonColor: '#4f46e5'
+            });
+        }
+
         async function sha256(message) {
             const msgBuffer = new TextEncoder().encode(message);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -474,26 +552,16 @@
         function toggleAddRecordModal()  { document.getElementById("add-record-modal").classList.toggle("hidden"); }
         function toggleEditModal()       { document.getElementById("edit-modal").classList.toggle("hidden"); }
         
-        // --- ส่วนที่แก้ไข: เพิ่มระบบ Logout เมื่อกดปุ่มเดิม ---
         function toggleAdminModal() {
             if (STATE.isAdmin) {
                 Swal.fire({
                     title: 'ยืนยันการออกจากระบบ?',
                     text: "คุณต้องการออกจากโหมดผู้ดูแลระบบใช่หรือไม่?",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#ef4444',
-                    cancelButtonColor: '#64748b',
-                    confirmButtonText: 'ออกจากระบบ',
-                    cancelButtonText: 'ยกเลิก'
+                    icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#64748b', confirmButtonText: 'ออกจากระบบ', cancelButtonText: 'ยกเลิก'
                 }).then((result) => {
-                    if (result.isConfirmed) {
-                        processAdminLogout();
-                    }
+                    if (result.isConfirmed) processAdminLogout();
                 });
-            } else {
-                document.getElementById("admin-modal").classList.toggle("hidden");
-            }
+            } else { document.getElementById("admin-modal").classList.toggle("hidden"); }
         }
 
         function processAdminLogout() {
@@ -504,7 +572,6 @@
             document.getElementById("admin-action-buttons").classList.add("hidden");
             Swal.fire("ออกจากระบบ", "กลับสู่โหมดผู้ใช้งานทั่วไปเรียบร้อย", "info");
         }
-        // ---------------------------------------------
 
         window.onload = () => { initDropdowns(); initView(); fetchDataFromSheet(); };
 
@@ -516,10 +583,7 @@
         function onCategoryChange() {
             const val = document.getElementById("cat-type-select").value;
             const match = OBEC_CATEGORIES.find(c => c.title === val);
-            if (match) {
-                document.getElementById("cat-lifespan").value = match.lifespan;
-                document.getElementById("cat-depreciation").value = match.rate;
-            }
+            if (match) { document.getElementById("cat-lifespan").value = match.lifespan; document.getElementById("cat-depreciation").value = match.rate; }
         }
 
         async function fetchDataFromSheet() {
@@ -545,54 +609,36 @@
         async function postData(payload) {
             setStatus('loading');
             try {
-                const res = await fetch(APP_SCRIPT_URL, {
-                    method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(payload)
-                });
+                const res = await fetch(APP_SCRIPT_URL, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(payload) });
                 const data = await res.json();
                 if (data.status !== 'success') { console.warn("postData warning:", data.message); }
-                if (payload.action !== "updateCheckStatus") { setTimeout(() => fetchDataFromSheet(), 2000); } 
-                else { setStatus('online'); }
+                if (payload.action !== "updateCheckStatus") { setTimeout(() => fetchDataFromSheet(), 2000); } else { setStatus('online'); }
             } catch (e) {
                 try {
                     await fetch(APP_SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(payload) });
-                    if (payload.action !== "updateCheckStatus") { setTimeout(() => fetchDataFromSheet(), 2500); } 
-                    else { setStatus('online'); }
+                    if (payload.action !== "updateCheckStatus") { setTimeout(() => fetchDataFromSheet(), 2500); } else { setStatus('online'); }
                 } catch (e2) { console.error(e2); setStatus('error'); }
             }
         }
 
         async function processAdminLogin() {
-            const username = document.getElementById("admin-user").value.trim();
-            const password = document.getElementById("admin-pass").value;
+            const username = document.getElementById("admin-user").value.trim(); const password = document.getElementById("admin-pass").value;
             if (!username || !password) return Swal.fire("แจ้งเตือน", "กรุณากรอก Username และ Password", "warning");
             const hash = await sha256(password);
             if (username === ADMIN_USERNAME && hash === ADMIN_PASSWORD_HASH) {
                 STATE.isAdmin = true;
                 document.getElementById("admin-btn").className = "bg-red-600 hover:bg-red-700 border border-red-500 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-1.5 shadow-md transition-all text-white cursor-pointer";
-                document.getElementById("admin-icon").className = "fa-solid fa-unlock text-white";
-                document.getElementById("admin-btn-text").textContent = "แอดมินออนไลน์";
+                document.getElementById("admin-icon").className = "fa-solid fa-unlock text-white"; document.getElementById("admin-btn-text").textContent = "แอดมินออนไลน์";
                 document.getElementById("admin-action-buttons").classList.remove("hidden");
-                document.getElementById("admin-pass").value = ""; 
-                document.getElementById("admin-modal").classList.add("hidden"); 
+                document.getElementById("admin-pass").value = ""; document.getElementById("admin-modal").classList.add("hidden"); 
                 Swal.fire("สำเร็จ", "ปลดล็อกฟังก์ชันเพิ่ม/แก้ไข/ลบ เรียบร้อย", "success");
             } else { Swal.fire("ผิดพลาด", "Username หรือรหัสผ่านไม่ถูกต้อง", "error"); }
         }
 
         function showPublicPINs() {
-            let htmlContent = `
-              <div class="mb-3 text-left">
-                  <input type="text" id="search-pin" onkeyup="filterPINTable()" placeholder="🔍 ค้นหาชื่อห้อง หรือ สถานที่..."
-                         class="w-full px-3 py-2 border border-slate-300 rounded-lg outline-none focus:border-emerald-500 transition-all text-sm">
-              </div>
-              <div style="max-height: 350px; overflow-y: auto;" class="custom-scrollbar border border-slate-200 rounded-lg">
-                  <table class="w-full text-center border-collapse text-sm">
-                    <thead class="bg-slate-100 text-slate-700 sticky top-0 z-10 shadow-sm">
-                      <tr><th class="p-2.5 border-b border-slate-200">สถานที่ / ชื่อห้อง</th><th class="p-2.5 border-b border-slate-200">รหัส PIN (4 หลัก)</th></tr>
-                    </thead><tbody>`;
+            let htmlContent = `<div class="mb-3 text-left"><input type="text" id="search-pin" onkeyup="filterPINTable()" placeholder="🔍 ค้นหาชื่อห้อง หรือ สถานที่..." class="w-full px-3 py-2 border border-slate-300 rounded-lg outline-none focus:border-emerald-500 transition-all text-sm"></div><div style="max-height: 350px; overflow-y: auto;" class="custom-scrollbar border border-slate-200 rounded-lg"><table class="w-full text-center border-collapse text-sm"><thead class="bg-slate-100 text-slate-700 sticky top-0 z-10 shadow-sm"><tr><th class="p-2.5 border-b border-slate-200">สถานที่ / ชื่อห้อง</th><th class="p-2.5 border-b border-slate-200">รหัส PIN (4 หลัก)</th></tr></thead><tbody>`;
             for (const [roomName, pinCode] of Object.entries(roomPINData)) {
-                htmlContent += `<tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors pin-row">
-                      <td class="p-2.5 pin-name text-slate-700">${esc(roomName)}</td><td class="p-2.5"><b class="text-emerald-600 tracking-widest">${esc(pinCode)}</b></td>
-                  </tr>`;
+                htmlContent += `<tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors pin-row"><td class="p-2.5 pin-name text-slate-700">${esc(roomName)}</td><td class="p-2.5"><b class="text-emerald-600 tracking-widest">${esc(pinCode)}</b></td></tr>`;
             }
             htmlContent += `</tbody></table></div>`;
             Swal.fire({ title: '🔑 รหัส Room PIN สาธารณะ', html: htmlContent, icon: 'info', confirmButtonText: 'ปิดหน้าต่าง', confirmButtonColor: '#0d9488', width: '500px' });
@@ -600,23 +646,16 @@
 
         function filterPINTable() {
             const input = document.getElementById("search-pin").value.toLowerCase();
-            document.querySelectorAll(".pin-row").forEach(row => {
-                const roomName = row.querySelector(".pin-name").textContent.toLowerCase();
-                row.style.display = roomName.includes(input) ? "" : "none";
-            });
+            document.querySelectorAll(".pin-row").forEach(row => { const roomName = row.querySelector(".pin-name").textContent.toLowerCase(); row.style.display = roomName.includes(input) ? "" : "none"; });
         }
 
         function checkRoomPinBeforeAction(roomName, switchElement, successCallback) {
-            if (!roomPINData[roomName]) { successCallback(); return; }
-            if (unlockedRooms.has(roomName)) { successCallback(); return; }
+            if (!roomPINData[roomName] || unlockedRooms.has(roomName)) { successCallback(); return; }
             Swal.fire({
                 title: `ล็อกอยู่! 🔒`, text: `กรุณากรอกรหัส Room PIN 4 ตัว สำหรับสถานที่: ${roomName}`,
                 input: 'password', inputAttributes: { maxlength: 4, autocapitalize: 'off', autocorrect: 'off', inputmode: 'numeric' },
                 showCancelButton: true, confirmButtonText: '🔓 ปลดล็อก', cancelButtonText: 'ยกเลิก', confirmButtonColor: '#0d6efd', cancelButtonColor: '#dc3545',
-                inputValidator: (value) => {
-                    if (!value) return 'กรุณากรอกรหัส PIN!';
-                    if (value !== roomPINData[roomName]) return 'รหัส PIN ไม่ถูกต้อง! ตรวจสอบที่ปุ่ม 🔑 ด้านบน';
-                }
+                inputValidator: (value) => { if (!value) return 'กรุณากรอกรหัส PIN!'; if (value !== roomPINData[roomName]) return 'รหัส PIN ไม่ถูกต้อง! ตรวจสอบที่ปุ่ม 🔑 ด้านบน'; }
             }).then((result) => {
                 if (result.isConfirmed) { unlockedRooms.add(roomName); Swal.fire({ icon: 'success', title: 'ปลดล็อกสำเร็จ!', showConfirmButton: false, timer: 1500 }); successCallback(); }
                 else if (switchElement && typeof switchElement.checked !== 'undefined') { switchElement.checked = !switchElement.checked; }
@@ -643,17 +682,12 @@
             if (!parentCode) return;
             const related = STATE.records.filter(r => String(r['รหัสครุภัณฑ์หลัก']).trim() === String(parentCode).trim());
             let maxSeq = 0;
-            related.forEach(r => {
-                const parts = String(r['เลขครุภัณฑ์']).split('/');
-                if (parts.length >= 2) { const seq = parseInt(parts[1]); if (!isNaN(seq) && seq > maxSeq) maxSeq = seq; }
-            });
-            const nextSeq = maxSeq + 1;
-            const yearBE = (new Date().getFullYear() + 543) % 100;
+            related.forEach(r => { const parts = String(r['เลขครุภัณฑ์']).split('/'); if (parts.length >= 2) { const seq = parseInt(parts[1]); if (!isNaN(seq) && seq > maxSeq) maxSeq = seq; } });
+            const nextSeq = maxSeq + 1; const yearBE = (new Date().getFullYear() + 543) % 100;
             const suggested = `${parentCode}/${nextSeq}/${yearBE}`;
             const serialInput = document.getElementById("rec-serial");
             serialInput.value = suggested; serialInput.style.borderColor = "#6366f1"; serialInput.style.boxShadow = "0 0 0 3px rgba(99,102,241,0.15)";
-            const hint = document.getElementById("serial-hint");
-            if (hint) hint.textContent = `✨ แนะนำจากรายการที่มีอยู่ ${related.length} ชิ้น`;
+            const hint = document.getElementById("serial-hint"); if (hint) hint.textContent = `✨ แนะนำจากรายการที่มีอยู่ ${related.length} ชิ้น`;
         }
 
         function updateFilterDropdowns() {
@@ -684,37 +718,18 @@
             
             pageList.forEach(c => {
                 const activeCount = STATE.records.filter(r => String(r['รหัสครุภัณฑ์หลัก']).trim() === String(c['รหัสครุภัณฑ์']).trim() && String(r['สถานะ']).trim() === 'ใช้งาน').length;
-                
-                // ตีกรอบ เพิ่มเงาให้สวยงาม
                 tb.innerHTML += `<tr class="block md:table-row bg-white md:hover:bg-slate-50 border border-slate-300 md:border-0 md:border-b md:border-slate-100 mb-5 md:mb-0 rounded-2xl md:rounded-none shadow-md md:shadow-none overflow-hidden transition">
-                    
-                    <td class="block md:table-cell p-3 md:p-2.5 font-bold text-white md:text-slate-700 bg-blue-700 md:bg-transparent border-b md:border-none border-blue-800 align-middle">
-                        <span class="md:hidden text-xs text-blue-200 font-normal mr-2">รหัสหลัก:</span>${esc(c['รหัสครุภัณฑ์'])}
-                    </td>
-
-                    <td class="block md:table-cell px-3 py-2 md:p-2.5 font-bold md:font-medium text-slate-900 text-base md:text-sm pt-3 md:pt-2.5 align-middle">
-                        <span class="md:hidden text-xs text-slate-500 font-normal mr-2 inline-block w-[75px]">ชื่อครุภัณฑ์:</span>${esc(c['ชื่อครุภัณฑ์'])}
-                    </td>
-
+                    <td class="block md:table-cell p-3 md:p-2.5 font-bold text-white md:text-slate-700 bg-blue-700 md:bg-transparent border-b md:border-none border-blue-800 align-middle"><span class="md:hidden text-xs text-blue-200 font-normal mr-2">รหัสหลัก:</span>${esc(c['รหัสครุภัณฑ์'])}</td>
+                    <td class="block md:table-cell px-3 py-2 md:p-2.5 font-bold md:font-medium text-slate-900 text-base md:text-sm pt-3 md:pt-2.5 align-middle"><span class="md:hidden text-xs text-slate-500 font-normal mr-2 inline-block w-[75px]">ชื่อครุภัณฑ์:</span>${esc(c['ชื่อครุภัณฑ์'])}</td>
                     <td class="hidden md:table-cell p-2.5 text-slate-600 align-middle">${esc(c['ประเภทครุภัณฑ์']) || '-'}</td>
                     <td class="hidden md:table-cell p-2.5 text-center font-medium align-middle">${esc(c['อายุการใช้งาน'])} ปี</td>
-                    
-                    <td class="block md:table-cell px-3 py-1.5 md:p-2.5 text-left md:text-center text-teal-600 font-bold align-middle">
-                        <span class="md:hidden text-xs text-slate-500 font-normal mr-2 inline-block w-[75px]">คงเหลือ:</span>${activeCount} <span class="md:hidden text-slate-600 font-normal">${esc(c['หน่วยนับ']) || 'ชิ้น'}</span>
-                    </td>
-
+                    <td class="block md:table-cell px-3 py-1.5 md:p-2.5 text-left md:text-center text-teal-600 font-bold align-middle"><span class="md:hidden text-xs text-slate-500 font-normal mr-2 inline-block w-[75px]">คงเหลือ:</span>${activeCount} <span class="md:hidden text-slate-600 font-normal">${esc(c['หน่วยนับ']) || 'ชิ้น'}</span></td>
                     <td class="hidden md:table-cell p-2.5 text-slate-600 align-middle">${esc(c['หน่วยนับ']) || 'ชิ้น'}</td>
-                    
-                    <td class="block md:table-cell p-2 md:p-2.5 text-center border-t md:border-t-0 border-slate-100 bg-slate-50 md:bg-transparent align-middle">
-                        <button onclick="delCatalog('${esc(c['รหัสครุภัณฑ์'])}')" class="flex items-center justify-center gap-1.5 w-full md:w-auto text-red-600 hover:text-red-800 py-1.5 px-3 bg-white md:bg-red-50 border border-red-200 md:border-none rounded-lg transition font-bold text-[13.5px] shadow-sm md:shadow-none">
-                            <i class="fa-solid fa-trash"></i><span class="md:hidden">ลบหมวดหมู่</span>
-                        </button>
-                    </td>
+                    <td class="block md:table-cell p-2 md:p-2.5 text-center border-t md:border-t-0 border-slate-100 bg-slate-50 md:bg-transparent align-middle"><button onclick="delCatalog('${esc(c['รหัสครุภัณฑ์'])}')" class="flex items-center justify-center gap-1.5 w-full md:w-auto text-red-600 hover:text-red-800 py-1.5 px-3 bg-white md:bg-red-50 border border-red-200 md:border-none rounded-lg transition font-bold text-[13.5px] shadow-sm md:shadow-none"><i class="fa-solid fa-trash"></i><span class="md:hidden">ลบหมวดหมู่</span></button></td>
                 </tr>`;
             });
             document.getElementById("cat-page-info").textContent = `หน้า ${PAGINATION.catalogPage} / ${maxPage} (รวม ${totalItems} ชนิด)`;
-            document.getElementById("cat-prev-btn").disabled = (PAGINATION.catalogPage === 1);
-            document.getElementById("cat-next-btn").disabled = (PAGINATION.catalogPage === maxPage);
+            document.getElementById("cat-prev-btn").disabled = (PAGINATION.catalogPage === 1); document.getElementById("cat-next-btn").disabled = (PAGINATION.catalogPage === maxPage);
         }
 
         function changeCatalogPage(offset) { PAGINATION.catalogPage += offset; renderCatalog(); }
@@ -738,8 +753,6 @@
             pageList.forEach(r => {
                 const parent = STATE.catalog.find(c => String(c['รหัสครุภัณฑ์']).trim() === String(r['รหัสครุภัณฑ์หลัก']).trim());
                 const parentCode = r['รหัสครุภัณฑ์หลัก']; const parentName = parent ? parent['ชื่อครุภัณฑ์'] : '-';
-                
-                // หัวการ์ดสีน้ำเงินสำหรับมือถือ
                 const parentDisplay = `<div><span class="font-bold text-blue-100 md:text-slate-700 text-[11px] md:text-xs">[${esc(parentCode)}]</span><br><span class="text-white md:text-slate-500 font-medium md:font-normal truncate md:max-w-[150px] block" title="${esc(parentName)}">${esc(parentName)}</span></div>`;
                 const itemName = r['ชื่อรายการ'] || parentName;
 
@@ -753,6 +766,13 @@
                 const safeLocation = (String(r['สถานที่เก็บ'] || '')).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
                 const sellDateInfo = (st === 'จำหน่ายแล้ว' && r['วันที่จำหน่าย']) ? `<div class="text-[11px] text-red-600 font-bold mt-1">จำหน่าย: ${formatDateDisplay(r['วันที่จำหน่าย'])}</div>` : '';
 
+                // เช็คว่ามีรูปไหม ถ้ามีใส่ไอคอนดูรูป
+                const imageUrl = r['URL รูปภาพ'];
+                let imageBtn = '';
+                if (imageUrl && imageUrl.trim() !== '') {
+                    imageBtn = `<button onclick="viewImage('${imageUrl}')" class="ml-2 bg-indigo-100 text-indigo-600 hover:bg-indigo-200 hover:text-indigo-800 px-2 py-0.5 rounded-md text-xs font-bold transition shadow-sm" title="ดูรูปภาพ"><i class="fa-solid fa-image"></i> ดูรูป</button>`;
+                }
+
                 let checkColumnHTML = '';
                 if (st === 'จำหน่ายแล้ว') {
                     checkColumnHTML = `<div class="flex justify-start md:justify-center"><span class="inline-block px-3 py-1.5 md:py-1 bg-gray-200 text-gray-600 rounded-lg md:rounded-full text-xs md:text-[11px] font-bold border border-gray-300 shadow-sm"><i class="fa-solid fa-box-archive mr-1"></i> จำหน่ายแล้ว</span></div>`;
@@ -764,8 +784,6 @@
                         const isChecked = (checkStatus === 'ตรวจสอบแล้ว' || checkStatus === 'มี');
                         const displayStatus = isChecked ? 'ตรวจสอบแล้ว' : 'รอตรวจสอบ';
                         const checkColor = isChecked ? 'text-teal-600' : 'text-red-500';
-                        
-                        // ขยายปุ่มตรวจสอบ (ครอบ Label ทำเป็นปุ่มใหญ่)
                         checkColumnHTML = `
                             <div class="flex flex-row md:flex-col items-center gap-3 md:gap-1.5">
                                 <label class="flex-1 md:flex-none flex items-center justify-center gap-2 cursor-pointer hover:bg-slate-50 transition-opacity bg-white md:bg-transparent px-3 py-2 md:p-0 rounded-xl md:rounded-none border border-slate-300 md:border-none shadow-sm md:shadow-none w-full md:w-auto">
@@ -780,69 +798,34 @@
                     }
                 }
 
-                // <tr> เพิ่มกรอบ เงา และระยะห่าง
                 tb.innerHTML += `<tr class="block md:table-row bg-white border border-slate-300 md:border-0 md:border-b md:border-slate-100 mb-6 md:mb-0 rounded-2xl md:rounded-none shadow-md md:shadow-none overflow-hidden transition">
-                    
-                    <!-- หัวการ์ดสีน้ำเงิน -->
-                    <td class="block md:table-cell p-3 md:p-2.5 align-middle bg-blue-700 md:bg-transparent border-b md:border-b-0 border-blue-800 md:border-transparent">
-                        ${parentDisplay}
-                    </td>
-
-                    <td class="block md:table-cell px-3 py-1.5 md:p-2.5 font-bold text-indigo-900 whitespace-nowrap align-middle pt-3 md:pt-2.5">
-                        <span class="md:hidden text-xs text-slate-500 font-normal mr-2 inline-block w-[75px]">เลขครุภัณฑ์:</span>
-                        ${esc(displaySerial)}
-                    </td>
-
+                    <td class="block md:table-cell p-3 md:p-2.5 align-middle bg-blue-700 md:bg-transparent border-b md:border-b-0 border-blue-800 md:border-transparent">${parentDisplay}</td>
+                    <td class="block md:table-cell px-3 py-1.5 md:p-2.5 font-bold text-indigo-900 whitespace-nowrap align-middle pt-3 md:pt-2.5"><span class="md:hidden text-xs text-slate-500 font-normal mr-2 inline-block w-[75px]">เลขครุภัณฑ์:</span>${esc(displaySerial)}</td>
                     <td class="block md:table-cell px-3 py-1.5 md:p-2.5 truncate md:max-w-[200px] align-middle font-medium text-slate-800" title="${esc(itemName)}">
-                        <span class="md:hidden text-xs text-slate-500 font-normal mr-2 inline-block w-[75px]">ชื่อรายการ:</span>
-                        ${esc(itemName)}
+                        <span class="md:hidden text-xs text-slate-500 font-normal mr-2 inline-block w-[75px]">ชื่อรายการ:</span>${esc(itemName)} ${imageBtn}
                     </td>
-
-                    <td class="block md:table-cell px-3 py-1.5 md:p-2.5 truncate md:max-w-[130px] align-middle text-slate-700">
-                        <span class="md:hidden text-xs text-slate-500 font-normal mr-2 inline-block w-[75px]">สถานที่:</span>
-                        ${esc(r['สถานที่เก็บ'])}
-                    </td>
-
-                    <td class="block md:table-cell px-3 py-1.5 md:p-2.5 text-left md:text-center align-middle">
-                        <span class="md:hidden text-xs text-slate-500 font-normal mr-2 inline-block w-[75px]">สถานะ:</span>
-                        <span class="px-2 py-1 text-[11px] rounded-md font-bold whitespace-nowrap ${badgeClass}">${esc(st)}</span>
-                        <div class="inline-block md:block md:mt-1 ml-2 md:ml-0">${sellDateInfo}</div>
-                    </td>
-
-                    <td class="block md:table-cell p-3 md:p-2.5 text-left md:text-center align-middle md:border-l md:border-slate-100 print-hide bg-slate-50 md:bg-transparent mt-2 md:mt-0 border-t border-slate-100 md:border-t-0">
-                        <span class="md:hidden text-sm text-slate-600 font-bold mr-2 mb-2 block">ผลการตรวจสอบ:</span>
-                        <div class="inline-block md:flex md:justify-center align-middle w-full md:w-auto">${checkColumnHTML}</div>
-                    </td>
-
-                    <!-- ย่อขนาดปุ่ม และจัดชิดขวา -->
+                    <td class="block md:table-cell px-3 py-1.5 md:p-2.5 truncate md:max-w-[130px] align-middle text-slate-700"><span class="md:hidden text-xs text-slate-500 font-normal mr-2 inline-block w-[75px]">สถานที่:</span>${esc(r['สถานที่เก็บ'])}</td>
+                    <td class="block md:table-cell px-3 py-1.5 md:p-2.5 text-left md:text-center align-middle"><span class="md:hidden text-xs text-slate-500 font-normal mr-2 inline-block w-[75px]">สถานะ:</span><span class="px-2 py-1 text-[11px] rounded-md font-bold whitespace-nowrap ${badgeClass}">${esc(st)}</span><div class="inline-block md:block md:mt-1 ml-2 md:ml-0">${sellDateInfo}</div></td>
+                    <td class="block md:table-cell p-3 md:p-2.5 text-left md:text-center align-middle md:border-l md:border-slate-100 print-hide bg-slate-50 md:bg-transparent mt-2 md:mt-0 border-t border-slate-100 md:border-t-0"><span class="md:hidden text-sm text-slate-600 font-bold mr-2 mb-2 block">ผลการตรวจสอบ:</span><div class="inline-block md:flex md:justify-center align-middle w-full md:w-auto">${checkColumnHTML}</div></td>
                     <td class="block md:table-cell p-2 md:p-2.5 text-right md:text-center print-hide align-middle border-t border-slate-100 md:border-t-0 bg-slate-100/50 md:bg-transparent">
                         <div class="flex justify-end md:justify-center gap-1.5">
-                            <button onclick="viewDepreciation('${safeSerial}')" class="flex items-center justify-center gap-1.5 text-blue-600 hover:text-blue-800 py-1.5 px-3 md:p-1.5 bg-white md:bg-blue-50 border border-blue-200 md:border-transparent rounded-lg transition shadow-sm md:shadow-none" title="คำนวณค่าเสื่อม">
-                                <i class="fa-solid fa-calculator"></i><span class="md:hidden text-[11px] font-bold">ค่าเสื่อม</span>
-                            </button>
-                            <button onclick="openEditModal('${safeSerial}')" class="flex items-center justify-center gap-1.5 text-amber-600 hover:text-amber-800 py-1.5 px-3 md:p-1.5 bg-white md:bg-amber-50 border border-amber-200 md:border-transparent rounded-lg transition shadow-sm md:shadow-none" title="แก้ไขครุภัณฑ์">
-                                <i class="fa-solid fa-pen-to-square"></i><span class="md:hidden text-[11px] font-bold">แก้ไข</span>
-                            </button>
-                            <button onclick="delRecord('${safeSerial}')" class="flex items-center justify-center gap-1.5 text-red-600 hover:text-red-800 py-1.5 px-3 md:p-1.5 bg-white md:bg-red-50 border border-red-200 md:border-transparent rounded-lg transition shadow-sm md:shadow-none" title="ลบครุภัณฑ์">
-                                <i class="fa-solid fa-trash"></i><span class="md:hidden text-[11px] font-bold">ลบ</span>
-                            </button>
+                            <button onclick="viewDepreciation('${safeSerial}')" class="flex items-center justify-center gap-1.5 text-blue-600 hover:text-blue-800 py-1.5 px-3 md:p-1.5 bg-white md:bg-blue-50 border border-blue-200 md:border-transparent rounded-lg transition shadow-sm md:shadow-none" title="คำนวณค่าเสื่อม"><i class="fa-solid fa-calculator"></i><span class="md:hidden text-[11px] font-bold">ค่าเสื่อม</span></button>
+                            <button onclick="openEditModal('${safeSerial}')" class="flex items-center justify-center gap-1.5 text-amber-600 hover:text-amber-800 py-1.5 px-3 md:p-1.5 bg-white md:bg-amber-50 border border-amber-200 md:border-transparent rounded-lg transition shadow-sm md:shadow-none" title="แก้ไขครุภัณฑ์"><i class="fa-solid fa-pen-to-square"></i><span class="md:hidden text-[11px] font-bold">แก้ไข</span></button>
+                            <button onclick="delRecord('${safeSerial}')" class="flex items-center justify-center gap-1.5 text-red-600 hover:text-red-800 py-1.5 px-3 md:p-1.5 bg-white md:bg-red-50 border border-red-200 md:border-transparent rounded-lg transition shadow-sm md:shadow-none" title="ลบครุภัณฑ์"><i class="fa-solid fa-trash"></i><span class="md:hidden text-[11px] font-bold">ลบ</span></button>
                         </div>
                     </td>
                 </tr>`;
             });
 
             document.getElementById("rec-page-info").textContent = `หน้า ${PAGINATION.recordsPage} / ${maxPage}`;
-            document.getElementById("rec-prev-btn").disabled = (PAGINATION.recordsPage === 1);
-            document.getElementById("rec-next-btn").disabled = (PAGINATION.recordsPage === maxPage);
+            document.getElementById("rec-prev-btn").disabled = (PAGINATION.recordsPage === 1); document.getElementById("rec-next-btn").disabled = (PAGINATION.recordsPage === maxPage);
         }
 
         function changeRecordsPage(offset) { PAGINATION.recordsPage += offset; renderRecords(); }
 
         function handleRealtimeFilter() {
-            const q = document.getElementById("filter-query").value.toLowerCase();
-            const pCode = document.getElementById("filter-parent").value;
-            const s = document.getElementById("filter-status").value;
-            const l = document.getElementById("filter-location").value;
+            const q = document.getElementById("filter-query").value.toLowerCase(); const pCode = document.getElementById("filter-parent").value;
+            const s = document.getElementById("filter-status").value; const l = document.getElementById("filter-location").value;
             const a = document.getElementById("filter-audit") ? document.getElementById("filter-audit").value : "";
 
             FILTERED_RECORDS = STATE.records.filter(r => {
@@ -852,8 +835,7 @@
 
                 const matchQ = rawSer.includes(q) || pName.includes(q) || r['รหัสครุภัณฑ์หลัก'].toLowerCase().includes(q) ||
                                (r['ชื่อรายการ'] && r['ชื่อรายการ'].toLowerCase().includes(q)) || (r['ลักษณะขนาด'] && r['ลักษณะขนาด'].toLowerCase().includes(q));
-                const matchP = pCode === "" || String(r['รหัสครุภัณฑ์หลัก']).trim() === pCode;
-                const matchS = s === "" || itemStatus === s;
+                const matchP = pCode === "" || String(r['รหัสครุภัณฑ์หลัก']).trim() === pCode; const matchS = s === "" || itemStatus === s;
                 const matchL = l === "" || String(r['สถานที่เก็บ']).trim() === l;
                 let matchA = true;
                 if (a !== "") {
@@ -871,8 +853,7 @@
         }
 
         function clearFilter() {
-            document.getElementById("filter-query").value = ""; document.getElementById("filter-parent").value = "";
-            document.getElementById("filter-status").value = ""; document.getElementById("filter-location").value = "";
+            document.getElementById("filter-query").value = ""; document.getElementById("filter-parent").value = ""; document.getElementById("filter-status").value = ""; document.getElementById("filter-location").value = "";
             if (document.getElementById("filter-audit")) document.getElementById("filter-audit").value = "";
             handleRealtimeFilter();
         }
@@ -885,14 +866,35 @@
             STATE.catalog.unshift(payload); FILTERED_CATALOG = [...STATE.catalog]; renderCatalog(); postData(payload); e.target.reset(); toggleAddCatalogModal(); Swal.fire("สำเร็จ", "เพิ่มสารบัญหลักเรียบร้อย", "success");
         }
 
-        function handleRecordSubmit(e) {
+        // อัปเดตให้รองรับอัปโหลดรูปภาพ
+        async function handleRecordSubmit(e) {
             e.preventDefault();
             if (!STATE.isAdmin) return Swal.fire("แจ้งเตือน", "กรุณาล็อกอินก่อนบันทึกข้อมูล", "warning");
             const newSerial = document.getElementById("rec-serial").value.trim();
             if (STATE.records.some(r => String(r['เลขครุภัณฑ์']).trim() === newSerial)) { return Swal.fire("เลขครุภัณฑ์ซ้ำ!", `เลขครุภัณฑ์ [${newSerial}] ถูกใช้งานในระบบไปแล้ว`, "error"); }
-            const payload = { action: "addRecord", 'รหัสครุภัณฑ์หลัก': document.getElementById("rec-parent-select").value, 'วันที่ได้มา': document.getElementById("rec-date").value, 'ราคาต่อหน่วย': document.getElementById("rec-price").value, 'เลขครุภัณฑ์': newSerial, 'สถานที่เก็บ': document.getElementById("rec-location").value.trim(), 'สถานะ': document.getElementById("rec-status").value, 'ชื่อรายการ': document.getElementById("rec-name").value.trim(), 'ลักษณะขนาด': document.getElementById("rec-desc").value.trim(), 'รหัส GFMIS': document.getElementById("rec-gfmis").value.trim(), 'ประเภทเงิน': document.getElementById("rec-money-type").value, 'วิธีการที่ได้มา': document.getElementById("rec-method").value, 'เอกสารอ้างอิง': document.getElementById("rec-ref-doc").value.trim(), 'วันที่จำหน่าย': '', 'การตรวจสอบ': 'ตรวจสอบแล้ว' };
-            STATE.records.unshift(payload); FILTERED_RECORDS = [...STATE.records]; renderRecords(); postData(payload); e.target.reset();
-            const serialInput = document.getElementById("rec-serial"); serialInput.style.borderColor = ""; serialInput.style.boxShadow = ""; document.getElementById("serial-hint").textContent = ""; toggleAddRecordModal(); Swal.fire("สำเร็จ", "เพิ่มรายชิ้นเรียบร้อย", "success");
+            
+            const btn = document.getElementById('submit-record-btn');
+            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังบันทึกและอัปโหลดรูป...';
+
+            let imageB64 = ''; let imageMime = '';
+            const fileInput = document.getElementById("rec-image");
+            if (fileInput.files.length > 0) {
+                imageB64 = await compressImage(fileInput.files[0]);
+                imageMime = fileInput.files[0].type;
+            }
+
+            const payload = { 
+                action: "addRecord", 
+                'รหัสครุภัณฑ์หลัก': document.getElementById("rec-parent-select").value, 'วันที่ได้มา': document.getElementById("rec-date").value, 'ราคาต่อหน่วย': document.getElementById("rec-price").value, 'เลขครุภัณฑ์': newSerial, 'สถานที่เก็บ': document.getElementById("rec-location").value.trim(), 'สถานะ': document.getElementById("rec-status").value, 'ชื่อรายการ': document.getElementById("rec-name").value.trim(), 'ลักษณะขนาด': document.getElementById("rec-desc").value.trim(), 'รหัส GFMIS': document.getElementById("rec-gfmis").value.trim(), 'ประเภทเงิน': document.getElementById("rec-money-type").value, 'วิธีการที่ได้มา': document.getElementById("rec-method").value, 'เอกสารอ้างอิง': document.getElementById("rec-ref-doc").value.trim(), 'วันที่จำหน่าย': '', 'การตรวจสอบ': 'ตรวจสอบแล้ว',
+                imageB64: imageB64, imageMime: imageMime
+            };
+
+            STATE.records.unshift(payload); FILTERED_RECORDS = [...STATE.records]; renderRecords(); 
+            await postData(payload); 
+            e.target.reset(); document.getElementById('rec-image-preview').classList.add('hidden'); document.getElementById("rec-image").value = "";
+            const serialInput = document.getElementById("rec-serial"); serialInput.style.borderColor = ""; serialInput.style.boxShadow = ""; document.getElementById("serial-hint").textContent = ""; 
+            toggleAddRecordModal(); Swal.fire("สำเร็จ", "เพิ่มรายชิ้นเรียบร้อย", "success");
+            btn.disabled = false; btn.textContent = 'บันทึกรายชิ้น';
         }
 
         function openEditModal(serial) {
@@ -907,18 +909,43 @@
             document.getElementById("edit-location").value = r['สถานที่เก็บ']; document.getElementById("edit-status").value = String(r['สถานะ']).trim();
             document.getElementById("edit-gfmis").value = r['รหัส GFMIS'] || ''; document.getElementById("edit-money-type").value = r['ประเภทเงิน'] || 'งบประมาณ';
             document.getElementById("edit-method").value = r['วิธีการที่ได้มา'] || 'ตกลงราคา'; document.getElementById("edit-ref-doc").value = r['เอกสารอ้างอิง'] || '';
+            
+            // จัดการเรื่องรูปภาพเก่า
+            document.getElementById("edit-existing-image").value = r['URL รูปภาพ'] || '';
+            const preview = document.getElementById('edit-image-preview');
+            if (r['URL รูปภาพ'] && r['URL รูปภาพ'].trim() !== '') {
+                preview.src = r['URL รูปภาพ']; preview.classList.remove('hidden');
+            } else { preview.classList.add('hidden'); preview.src = ''; }
+            document.getElementById("edit-image").value = ""; // เคลียร์ช่องเลือกไฟล์เผื่อไว้
+
             if (r['วันที่จำหน่าย']) { try { const d2 = new Date(r['วันที่จำหน่าย']); document.getElementById("edit-disposal-date").value = d2.toISOString().split('T')[0]; } catch (e) { document.getElementById("edit-disposal-date").value = r['วันที่จำหน่าย']; } } else { document.getElementById("edit-disposal-date").value = ""; }
             handleEditStatusChange(); toggleEditModal();
         }
 
-        function submitEdit(e) {
+        // อัปเดตให้รองรับอัปโหลดรูปภาพ
+        async function submitEdit(e) {
             e.preventDefault();
-            const btn = document.getElementById("save-edit-btn"); btn.disabled = true; btn.textContent = "กำลังบันทึก...";
+            const btn = document.getElementById("save-edit-btn"); btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังบันทึกข้อมูล...';
             const oldSerial = String(document.getElementById("edit-old-serial").value).trim(); const newSerial = String(document.getElementById("edit-serial").value).trim();
             if (newSerial !== oldSerial && STATE.records.some(r => String(r['เลขครุภัณฑ์']).trim() === newSerial)) { btn.disabled = false; btn.textContent = "บันทึกการแก้ไข"; return Swal.fire("เลขครุภัณฑ์ซ้ำ!", `ไม่สามารถเปลี่ยนเป็นเลข [${newSerial}] ได้`, "error"); }
-            const payload = { action: "editRecord", oldSerial: oldSerial, 'รหัสครุภัณฑ์หลัก': document.getElementById("edit-parent").value, 'วันที่ได้มา': document.getElementById("edit-date").value, 'ราคาต่อหน่วย': document.getElementById("edit-price").value, 'เลขครุภัณฑ์': newSerial, 'สถานที่เก็บ': document.getElementById("edit-location").value.trim(), 'สถานะ': document.getElementById("edit-status").value, 'ชื่อรายการ': document.getElementById("edit-name").value.trim(), 'ลักษณะขนาด': document.getElementById("edit-desc").value.trim(), 'การตรวจสอบ': document.getElementById("edit-check-status").value, 'รหัส GFMIS': document.getElementById("edit-gfmis").value.trim(), 'ประเภทเงิน': document.getElementById("edit-money-type").value, 'วิธีการที่ได้มา': document.getElementById("edit-method").value, 'เอกสารอ้างอิง': document.getElementById("edit-ref-doc").value.trim(), 'วันที่จำหน่าย': document.getElementById("edit-disposal-date").value };
+            
+            let imageB64 = ''; let imageMime = '';
+            const fileInput = document.getElementById("edit-image");
+            if (fileInput.files.length > 0) {
+                imageB64 = await compressImage(fileInput.files[0]);
+                imageMime = fileInput.files[0].type;
+            }
+            const existingImage = document.getElementById("edit-existing-image").value;
+
+            const payload = { 
+                action: "editRecord", oldSerial: oldSerial, 'รหัสครุภัณฑ์หลัก': document.getElementById("edit-parent").value, 'วันที่ได้มา': document.getElementById("edit-date").value, 'ราคาต่อหน่วย': document.getElementById("edit-price").value, 'เลขครุภัณฑ์': newSerial, 'สถานที่เก็บ': document.getElementById("edit-location").value.trim(), 'สถานะ': document.getElementById("edit-status").value, 'ชื่อรายการ': document.getElementById("edit-name").value.trim(), 'ลักษณะขนาด': document.getElementById("edit-desc").value.trim(), 'การตรวจสอบ': document.getElementById("edit-check-status").value, 'รหัส GFMIS': document.getElementById("edit-gfmis").value.trim(), 'ประเภทเงิน': document.getElementById("edit-money-type").value, 'วิธีการที่ได้มา': document.getElementById("edit-method").value, 'เอกสารอ้างอิง': document.getElementById("edit-ref-doc").value.trim(), 'วันที่จำหน่าย': document.getElementById("edit-disposal-date").value,
+                existingImageUrl: existingImage, imageB64: imageB64, imageMime: imageMime
+            };
+
             STATE.records = STATE.records.filter(x => String(x['เลขครุภัณฑ์']).trim() !== oldSerial); STATE.records.unshift(payload); FILTERED_RECORDS = [...STATE.records];
-            toggleEditModal(); renderRecords(); postData(payload); Swal.fire("สำเร็จ", "แก้ไขข้อมูลเรียบร้อยแล้ว", "success"); setTimeout(() => { btn.disabled = false; btn.textContent = "บันทึกการแก้ไข"; }, 1000);
+            toggleEditModal(); renderRecords(); 
+            await postData(payload); 
+            Swal.fire("สำเร็จ", "แก้ไขข้อมูลเรียบร้อยแล้ว", "success"); setTimeout(() => { btn.disabled = false; btn.textContent = "บันทึกการแก้ไข"; }, 1000);
         }
 
         function handleEditStatusChange() {
@@ -1010,13 +1037,14 @@
             const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" })); link.download = "สารบัญประเภทหลักครุภัณฑ์.csv"; link.click();
         }
 
+        // เพิ่มการ Export URL รูปภาพลงไปในไฟล์ Excel ด้วย
         function exportToExcel() {
             if (FILTERED_RECORDS.length === 0) return Swal.fire("แจ้งเตือน", "ไม่มีข้อมูลให้ส่งออก", "warning");
-            let csv = "\uFEFFรหัสครุภัณฑ์หลัก,วันที่ได้มา,เลขครุภัณฑ์,ชื่อรายการ,ลักษณะขนาด,ราคาต่อหน่วย,สถานที่เก็บ,สถานะ,วันที่จำหน่าย,ประเภทเงิน,วิธีการที่ได้มา,การตรวจสอบ,รหัส GFMIS,เอกสารอ้างอิง\n";
+            let csv = "\uFEFFรหัสครุภัณฑ์หลัก,วันที่ได้มา,เลขครุภัณฑ์,ชื่อรายการ,ลักษณะขนาด,ราคาต่อหน่วย,สถานที่เก็บ,สถานะ,วันที่จำหน่าย,ประเภทเงิน,วิธีการที่ได้มา,การตรวจสอบ,รหัส GFMIS,เอกสารอ้างอิง,URL รูปภาพ\n";
             FILTERED_RECORDS.forEach(r => {
                 const chkStatus = r['การตรวจสอบ'] ? String(r['การตรวจสอบ']).trim() : 'ตรวจสอบแล้ว';
                 let excelStatus = chkStatus === 'ไม่พบครุภัณฑ์' ? 'ไม่พบครุภัณฑ์' : ((chkStatus === 'ตรวจสอบแล้ว' || chkStatus === 'มี') ? 'ตรวจสอบแล้ว' : 'รอตรวจสอบ');
-                csv += `"${r['รหัสครุภัณฑ์หลัก']}","${formatDateDisplay(r['วันที่ได้มา'])}","${String(r['เลขครุภัณฑ์']).trim()}","${r['ชื่อรายการ'] || ''}","${r['ลักษณะขนาด'] || ''}","${r['ราคาต่อหน่วย']}","${r['สถานที่เก็บ']}","${r['สถานะ']}","${formatDateDisplay(r['วันที่จำหน่าย'])}","${r['ประเภทเงิน'] || ''}","${r['วิธีการที่ได้มา'] || ''}","${excelStatus}","${r['รหัส GFMIS'] || ''}","${r['เอกสารอ้างอิง'] || ''}"\n`;
+                csv += `"${r['รหัสครุภัณฑ์หลัก']}","${formatDateDisplay(r['วันที่ได้มา'])}","${String(r['เลขครุภัณฑ์']).trim()}","${r['ชื่อรายการ'] || ''}","${r['ลักษณะขนาด'] || ''}","${r['ราคาต่อหน่วย']}","${r['สถานที่เก็บ']}","${r['สถานะ']}","${formatDateDisplay(r['วันที่จำหน่าย'])}","${r['ประเภทเงิน'] || ''}","${r['วิธีการที่ได้มา'] || ''}","${excelStatus}","${r['รหัส GFMIS'] || ''}","${r['เอกสารอ้างอิง'] || ''}","${r['URL รูปภาพ'] || ''}"\n`;
             });
             const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" })); link.download = "ทะเบียนทรัพย์สินรายชิ้น.csv"; link.click();
         }

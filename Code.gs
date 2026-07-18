@@ -1,3 +1,4 @@
+/* STREAMING_CHUNK:Configuring constants... */
 // ======================================================================
 // Code.gs — Google Apps Script สำหรับระบบทะเบียนคุมทรัพย์สิน
 // โรงเรียนวัดแสงสรรค์
@@ -8,9 +9,10 @@
 
 const SHEET_ID = '1ZU2qByqg50fspEtV2n-ZPkXIEokHIvxQIOGX3_PdjNQ';
 
-// 👇 ใส่ ID โฟลเดอร์ Google Drive ที่เปิดแชร์สาธารณะ (Anyone with link) ไว้แล้ว สำหรับเก็บรูป
+// 👇 ใส่ ID โฟลเดอร์ Google Drive ของคุณเรียบร้อยแล้ว
 const IMAGE_FOLDER_ID = '1XkXNNNiwUvzyks6aGoUweMGpWGndxfDw'; 
 
+/* STREAMING_CHUNK:Handling GET requests... */
 function doGet(e) {
   // ถ้าไม่มี action → แสดงหน้าเว็บ (สำหรับ GAS Hosted เท่านั้น, Vercel ไม่ใช้ส่วนนี้)
   if (!e || !e.parameter || !e.parameter.action) {
@@ -52,6 +54,7 @@ function doGet(e) {
   }
 }
 
+/* STREAMING_CHUNK:Handling Room PIN data... */
 function getRoomPinData(ss) {
   let sheet = ss.getSheetByName('RoomPIN');
   if (!sheet) {
@@ -73,6 +76,7 @@ function getRoomPinData(ss) {
   return obj;
 }
 
+/* STREAMING_CHUNK:Handling POST requests... */
 function doPost(e) {
   try {
     const ss = SpreadsheetApp.openById(SHEET_ID);
@@ -97,13 +101,15 @@ function doPost(e) {
       }
       return createResponse({ status: 'success' });
     }
+    
+    /* STREAMING_CHUNK:Handling Add Record with Image... */
     else if (action === 'addRecord') {
       const parentCode = params['รหัสครุภัณฑ์หลัก'];
       let targetSheet = getOrCreateSheet(ss, parentCode);
       
       // จัดการเซฟรูปภาพ
       let imageUrl = '';
-      if (params.imageB64 && IMAGE_FOLDER_ID !== 'ใส่_ID_โฟลเดอร์_Drive_ที่นี่') {
+      if (params.imageB64) {
         imageUrl = saveImageToDrive(params.imageB64, params.imageMime, params['เลขครุภัณฑ์'].replace(/\//g, '-') + "_" + new Date().getTime());
       }
 
@@ -126,6 +132,8 @@ function doPost(e) {
       ]);
       return createResponse({ status: 'success' });
     }
+    
+    /* STREAMING_CHUNK:Handling Edit Record with Image... */
     else if (action === 'editRecord') {
       deleteRecordFromAllSheets(ss, params['oldSerial']);
       const parentCode = params['รหัสครุภัณฑ์หลัก'];
@@ -133,7 +141,7 @@ function doPost(e) {
       
       // จัดการเซฟรูปภาพกรณีแก้ไข
       let imageUrl = params['existingImageUrl'] || '';
-      if (params.imageB64 && IMAGE_FOLDER_ID !== 'ใส่_ID_โฟลเดอร์_Drive_ที่นี่') {
+      if (params.imageB64) {
         imageUrl = saveImageToDrive(params.imageB64, params.imageMime, params['เลขครุภัณฑ์'].replace(/\//g, '-') + "_" + new Date().getTime());
       }
 
@@ -156,6 +164,8 @@ function doPost(e) {
       ]);
       return createResponse({ status: 'success' });
     }
+    
+    /* STREAMING_CHUNK:Handling Check Status & Delete... */
     else if (action === 'updateCheckStatus') {
       const allSheets = ss.getSheets();
       const searchSerial = String(params.serialNumber).trim();
@@ -214,6 +224,7 @@ function doPost(e) {
   }
 }
 
+/* STREAMING_CHUNK:Helper Functions... */
 // =====================================================================
 // Helper Functions
 // =====================================================================
@@ -243,6 +254,7 @@ function setupCatalogSheet(ss) {
   }
 }
 
+/* STREAMING_CHUNK:Adding Image URL column to sheets... */
 function getOrCreateSheet(ss, sheetName) {
   let sheet = ss.getSheetByName(sheetName);
   if (!sheet) {
@@ -299,3 +311,4 @@ function createResponse(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
 }
+```eof

@@ -417,27 +417,17 @@
         let unlockedRooms = new Set();
         const urlParams = new URLSearchParams(window.location.search);
         
-        // [แก้ไข] เปลี่ยนจาก const เป็น let เพื่อให้ตัวแปรสามารถเปลี่ยนค่าได้เมื่อกดเมนู
         let CURRENT_VIEW = urlParams.get('view') || 'catalog'; 
 
-        // [แก้ไข] ฟังก์ชันสลับหน้าโดยไม่รีเฟรช (SPA Approach)
         function navigatePage(view) {
-            // ถ้ากดปุ่มหน้าปัจจุบันที่เปิดอยู่ ไม่ต้องทำอะไร
             if (CURRENT_VIEW === view) return; 
-            
-            // อัปเดตตัวแปรสถานะ
             CURRENT_VIEW = view;
-            
-            // เปลี่ยน URL ด้านบนเบราว์เซอร์โดยไม่ทำให้หน้ารีเฟรช
             const url = new URL(window.location.href);
             url.searchParams.set('view', view);
             window.history.pushState({ path: url.href }, '', url.href);
-            
-            // เรียกใช้ฟังก์ชันสลับ CSS ให้ซ่อน/แสดงหน้าใหม่ทันที
             initView();
         }
 
-        // [เพิ่มใหม่] ดักจับการกดปุ่ม Back/Forward ของเบราว์เซอร์ให้สลับหน้าตาม URL ด้วย
         window.addEventListener('popstate', () => {
             const params = new URLSearchParams(window.location.search);
             CURRENT_VIEW = params.get('view') || 'catalog';
@@ -547,13 +537,30 @@
                 const data = await res.json();
                 if (data.status === 'success') {
                     STATE.catalog = (data.catalog || []).sort((a, b) => parseInt(a['รหัสครุภัณฑ์']) - parseInt(b['รหัสครุภัณฑ์']));
-                    STATE.records = data.records || [];
+                    
+                    let loadedRecords = data.records || [];
+                    
+                    // จัดเรียงข้อมูลตาม 1. รหัสครุภัณฑ์หลัก -> 2. วันที่ได้มา -> 3. เลขครุภัณฑ์ (เพื่อให้แสดงผลในเว็บเป็นระเบียบ)
+                    loadedRecords.sort((a, b) => {
+                        const pA = String(a['รหัสครุภัณฑ์หลัก'] || ''); 
+                        const pB = String(b['รหัสครุภัณฑ์หลัก'] || '');
+                        if (pA !== pB) return pA.localeCompare(pB, undefined, { numeric: true });
+                        
+                        const dA = String(a['วันที่ได้มา'] || ''); 
+                        const dB = String(b['วันที่ได้มา'] || '');
+                        if (dA !== dB) return dA.localeCompare(dB);
+                        
+                        const sA = String(a['เลขครุภัณฑ์'] || ''); 
+                        const sB = String(b['เลขครุภัณฑ์'] || '');
+                        return sA.localeCompare(sB, undefined, { numeric: true });
+                    });
+                    
+                    STATE.records = loadedRecords;
                     roomPINData = data.roomPINs || {};
                     document.getElementById("last-sync-time").textContent = new Date().toLocaleTimeString('th-TH');
                     FILTERED_CATALOG = [...STATE.catalog]; FILTERED_RECORDS = [...STATE.records];
                     PAGINATION.catalogPage = 1; PAGINATION.recordsPage = 1;
                     updateFilterDropdowns();
-                    // Render ข้อมูลหน้าทั้งสองไว้เลย รอแสดงผล
                     renderCatalog();
                     renderRecords();
                     setStatus('online');
@@ -704,7 +711,6 @@
             pageList.forEach(c => {
                 const activeCount = STATE.records.filter(r => String(r['รหัสครุภัณฑ์หลัก']).trim() === String(c['รหัสครุภัณฑ์']).trim() && String(r['สถานะ']).trim() === 'ใช้งาน').length;
                 
-                // ตีกรอบ เพิ่มเงาให้สวยงาม
                 tb.innerHTML += `<tr class="block md:table-row bg-white md:hover:bg-slate-50 border border-slate-300 md:border-0 md:border-b md:border-slate-100 mb-5 md:mb-0 rounded-2xl md:rounded-none shadow-md md:shadow-none overflow-hidden transition">
                     
                     <td class="block md:table-cell p-3 md:p-2.5 font-bold text-white md:text-slate-700 bg-blue-700 md:bg-transparent border-b md:border-none border-blue-800 align-middle">
@@ -758,7 +764,6 @@
                 const parent = STATE.catalog.find(c => String(c['รหัสครุภัณฑ์']).trim() === String(r['รหัสครุภัณฑ์หลัก']).trim());
                 const parentCode = r['รหัสครุภัณฑ์หลัก']; const parentName = parent ? parent['ชื่อครุภัณฑ์'] : '-';
                 
-                // หัวการ์ดสีน้ำเงินสำหรับมือถือ
                 const parentDisplay = `<div><span class="font-bold text-blue-100 md:text-slate-700 text-[11px] md:text-xs">[${esc(parentCode)}]</span><br><span class="text-white md:text-slate-500 font-medium md:font-normal truncate md:max-w-[150px] block" title="${esc(parentName)}">${esc(parentName)}</span></div>`;
                 const itemName = r['ชื่อรายการ'] || parentName;
 
@@ -784,7 +789,6 @@
                         const displayStatus = isChecked ? 'ตรวจสอบแล้ว' : 'รอตรวจสอบ';
                         const checkColor = isChecked ? 'text-teal-600' : 'text-red-500';
                         
-                        // ขยายปุ่มตรวจสอบ (ครอบ Label ทำเป็นปุ่มใหญ่)
                         checkColumnHTML = `
                             <div class="flex flex-row md:flex-col items-center gap-3 md:gap-1.5">
                                 <label class="flex-1 md:flex-none flex items-center justify-center gap-2 cursor-pointer hover:bg-slate-50 transition-opacity bg-white md:bg-transparent px-3 py-2 md:p-0 rounded-xl md:rounded-none border border-slate-300 md:border-none shadow-sm md:shadow-none w-full md:w-auto">
@@ -799,10 +803,8 @@
                     }
                 }
 
-                // <tr> เพิ่มกรอบ เงา และระยะห่าง
                 tb.innerHTML += `<tr class="block md:table-row bg-white border border-slate-300 md:border-0 md:border-b md:border-slate-100 mb-6 md:mb-0 rounded-2xl md:rounded-none shadow-md md:shadow-none overflow-hidden transition">
                     
-                    <!-- หัวการ์ดสีน้ำเงิน -->
                     <td class="block md:table-cell p-3 md:p-2.5 align-middle bg-blue-700 md:bg-transparent border-b md:border-b-0 border-blue-800 md:border-transparent">
                         ${parentDisplay}
                     </td>
@@ -833,7 +835,6 @@
                         <div class="inline-block md:flex md:justify-center align-middle w-full md:w-auto">${checkColumnHTML}</div>
                     </td>
 
-                    <!-- ย่อขนาดปุ่ม และจัดชิดขวา -->
                     <td class="block md:table-cell p-2 md:p-2.5 text-right md:text-center print-hide align-middle border-t border-slate-100 md:border-t-0 bg-slate-100/50 md:bg-transparent">
                         <div class="flex justify-end md:justify-center gap-1.5">
                             <button onclick="viewDepreciation('${safeSerial}')" class="flex items-center justify-center gap-1.5 text-blue-600 hover:text-blue-800 py-1.5 px-3 md:p-1.5 bg-white md:bg-blue-50 border border-blue-200 md:border-transparent rounded-lg transition shadow-sm md:shadow-none" title="คำนวณค่าเสื่อม">

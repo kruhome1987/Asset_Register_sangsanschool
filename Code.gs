@@ -1,4 +1,3 @@
-/* STREAMING_CHUNK:Configuring constants... */
 // ======================================================================
 // Code.gs — Google Apps Script สำหรับระบบทะเบียนคุมทรัพย์สิน
 // โรงเรียนวัดแสงสรรค์
@@ -9,13 +8,9 @@
 
 const SHEET_ID = '1ZU2qByqg50fspEtV2n-ZPkXIEokHIvxQIOGX3_PdjNQ';
 
-// 👇 ใส่ ID โฟลเดอร์ Google Drive ของคุณเรียบร้อยแล้ว
-const IMAGE_FOLDER_ID = '1XkXNNNiwUvzyks6aGoUweMGpWGndxfDw'; 
-
-/* STREAMING_CHUNK:Handling GET requests... */
 function doGet(e) {
   // ถ้าไม่มี action → แสดงหน้าเว็บ (สำหรับ GAS Hosted เท่านั้น, Vercel ไม่ใช้ส่วนนี้)
-  if (!e || !e.parameter || !e.parameter.action) {
+  if (!e.parameter.action) {
     return HtmlService.createTemplateFromFile('Index')
         .evaluate()
         .setTitle('ระบบทะเบียนคุมทรัพย์สิน โรงเรียนวัดแสงสรรค์')
@@ -54,7 +49,6 @@ function doGet(e) {
   }
 }
 
-/* STREAMING_CHUNK:Handling Room PIN data... */
 function getRoomPinData(ss) {
   let sheet = ss.getSheetByName('RoomPIN');
   if (!sheet) {
@@ -76,7 +70,6 @@ function getRoomPinData(ss) {
   return obj;
 }
 
-/* STREAMING_CHUNK:Handling POST requests... */
 function doPost(e) {
   try {
     const ss = SpreadsheetApp.openById(SHEET_ID);
@@ -101,18 +94,9 @@ function doPost(e) {
       }
       return createResponse({ status: 'success' });
     }
-    
-    /* STREAMING_CHUNK:Handling Add Record with Image... */
     else if (action === 'addRecord') {
       const parentCode = params['รหัสครุภัณฑ์หลัก'];
       let targetSheet = getOrCreateSheet(ss, parentCode);
-      
-      // จัดการเซฟรูปภาพ
-      let imageUrl = '';
-      if (params.imageB64) {
-        imageUrl = saveImageToDrive(params.imageB64, params.imageMime, params['เลขครุภัณฑ์'].replace(/\//g, '-') + "_" + new Date().getTime());
-      }
-
       targetSheet.appendRow([
         "'" + parentCode,
         params['วันที่ได้มา'],
@@ -127,24 +111,14 @@ function doPost(e) {
         params['วิธีการที่ได้มา'] || '',
         params['การตรวจสอบ'] || 'ตรวจสอบแล้ว',
         params['รหัส GFMIS'] || '',
-        params['เอกสารอ้างอิง'] || '',
-        imageUrl // คอลัมน์ที่ 15 เก็บ URL รูปภาพ
+        params['เอกสารอ้างอิง'] || ''
       ]);
       return createResponse({ status: 'success' });
     }
-    
-    /* STREAMING_CHUNK:Handling Edit Record with Image... */
     else if (action === 'editRecord') {
       deleteRecordFromAllSheets(ss, params['oldSerial']);
       const parentCode = params['รหัสครุภัณฑ์หลัก'];
       let targetSheet = getOrCreateSheet(ss, parentCode);
-      
-      // จัดการเซฟรูปภาพกรณีแก้ไข
-      let imageUrl = params['existingImageUrl'] || '';
-      if (params.imageB64) {
-        imageUrl = saveImageToDrive(params.imageB64, params.imageMime, params['เลขครุภัณฑ์'].replace(/\//g, '-') + "_" + new Date().getTime());
-      }
-
       targetSheet.appendRow([
         "'" + parentCode,
         params['วันที่ได้มา'],
@@ -159,13 +133,10 @@ function doPost(e) {
         params['วิธีการที่ได้มา'] || '',
         params['การตรวจสอบ'] || 'ตรวจสอบแล้ว',
         params['รหัส GFMIS'] || '',
-        params['เอกสารอ้างอิง'] || '',
-        imageUrl // คอลัมน์ที่ 15 เก็บ URL รูปภาพ
+        params['เอกสารอ้างอิง'] || ''
       ]);
       return createResponse({ status: 'success' });
     }
-    
-    /* STREAMING_CHUNK:Handling Check Status & Delete... */
     else if (action === 'updateCheckStatus') {
       const allSheets = ss.getSheets();
       const searchSerial = String(params.serialNumber).trim();
@@ -224,28 +195,9 @@ function doPost(e) {
   }
 }
 
-/* STREAMING_CHUNK:Helper Functions... */
 // =====================================================================
 // Helper Functions
 // =====================================================================
-
-// ฟังก์ชันบันทึกรูปลง Drive
-function saveImageToDrive(base64Data, mimeType, fileName) {
-  try {
-    if (!base64Data) return '';
-    const folder = DriveApp.getFolderById(IMAGE_FOLDER_ID);
-    // ตัด Header ของ Base64 ออก (เช่น data:image/jpeg;base64,)
-    const data = base64Data.split(',')[1];
-    const blob = Utilities.newBlob(Utilities.base64Decode(data), mimeType, fileName);
-    const file = folder.createFile(blob);
-    // เซ็ตสิทธิ์ให้คนนอกดูรูปผ่านเว็บได้
-    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-    return file.getUrl();
-  } catch (e) {
-    console.log("Error saving image: " + e.toString());
-    return '';
-  }
-}
 
 function setupCatalogSheet(ss) {
   if (!ss.getSheetByName('AssetCatalog')) {
@@ -254,13 +206,11 @@ function setupCatalogSheet(ss) {
   }
 }
 
-/* STREAMING_CHUNK:Adding Image URL column to sheets... */
 function getOrCreateSheet(ss, sheetName) {
   let sheet = ss.getSheetByName(sheetName);
   if (!sheet) {
     sheet = ss.insertSheet(sheetName);
-    // เพิ่มคอลัมน์ URL รูปภาพ เข้าไปท้ายสุด
-    sheet.appendRow(['รหัสครุภัณฑ์หลัก', 'วันที่ได้มา', 'เลขครุภัณฑ์', 'ชื่อรายการ', 'ลักษณะขนาด', 'ราคาต่อหน่วย', 'สถานที่เก็บ', 'สถานะ', 'วันที่จำหน่าย', 'ประเภทเงิน', 'วิธีการที่ได้มา', 'การตรวจสอบ', 'รหัส GFMIS', 'เอกสารอ้างอิง', 'URL รูปภาพ']);
+    sheet.appendRow(['รหัสครุภัณฑ์หลัก', 'วันที่ได้มา', 'เลขครุภัณฑ์', 'ชื่อรายการ', 'ลักษณะขนาด', 'ราคาต่อหน่วย', 'สถานที่เก็บ', 'สถานะ', 'วันที่จำหน่าย', 'ประเภทเงิน', 'วิธีการที่ได้มา', 'การตรวจสอบ', 'รหัส GFMIS', 'เอกสารอ้างอิง']);
   }
   return sheet;
 }
@@ -311,4 +261,3 @@ function createResponse(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
 }
-```eof

@@ -416,13 +416,33 @@
         let roomPINData = {};
         let unlockedRooms = new Set();
         const urlParams = new URLSearchParams(window.location.search);
-        const CURRENT_VIEW = urlParams.get('view') || 'catalog'; 
+        
+        // [แก้ไข] เปลี่ยนจาก const เป็น let เพื่อให้ตัวแปรสามารถเปลี่ยนค่าได้เมื่อกดเมนู
+        let CURRENT_VIEW = urlParams.get('view') || 'catalog'; 
 
+        // [แก้ไข] ฟังก์ชันสลับหน้าโดยไม่รีเฟรช (SPA Approach)
         function navigatePage(view) {
+            // ถ้ากดปุ่มหน้าปัจจุบันที่เปิดอยู่ ไม่ต้องทำอะไร
+            if (CURRENT_VIEW === view) return; 
+            
+            // อัปเดตตัวแปรสถานะ
+            CURRENT_VIEW = view;
+            
+            // เปลี่ยน URL ด้านบนเบราว์เซอร์โดยไม่ทำให้หน้ารีเฟรช
             const url = new URL(window.location.href);
             url.searchParams.set('view', view);
-            window.location.href = url.href; 
+            window.history.pushState({ path: url.href }, '', url.href);
+            
+            // เรียกใช้ฟังก์ชันสลับ CSS ให้ซ่อน/แสดงหน้าใหม่ทันที
+            initView();
         }
+
+        // [เพิ่มใหม่] ดักจับการกดปุ่ม Back/Forward ของเบราว์เซอร์ให้สลับหน้าตาม URL ด้วย
+        window.addEventListener('popstate', () => {
+            const params = new URLSearchParams(window.location.search);
+            CURRENT_VIEW = params.get('view') || 'catalog';
+            initView();
+        });
 
         function initView() {
             const secCatalog = document.getElementById('section-catalog');
@@ -474,7 +494,6 @@
         function toggleAddRecordModal()  { document.getElementById("add-record-modal").classList.toggle("hidden"); }
         function toggleEditModal()       { document.getElementById("edit-modal").classList.toggle("hidden"); }
         
-        // --- ส่วนที่แก้ไข: เพิ่มระบบ Logout เมื่อกดปุ่มเดิม ---
         function toggleAdminModal() {
             if (STATE.isAdmin) {
                 Swal.fire({
@@ -504,7 +523,6 @@
             document.getElementById("admin-action-buttons").classList.add("hidden");
             Swal.fire("ออกจากระบบ", "กลับสู่โหมดผู้ใช้งานทั่วไปเรียบร้อย", "info");
         }
-        // ---------------------------------------------
 
         window.onload = () => { initDropdowns(); initView(); fetchDataFromSheet(); };
 
@@ -535,8 +553,9 @@
                     FILTERED_CATALOG = [...STATE.catalog]; FILTERED_RECORDS = [...STATE.records];
                     PAGINATION.catalogPage = 1; PAGINATION.recordsPage = 1;
                     updateFilterDropdowns();
-                    if(CURRENT_VIEW === 'catalog') renderCatalog();
-                    if(CURRENT_VIEW === 'records') renderRecords();
+                    // Render ข้อมูลหน้าทั้งสองไว้เลย รอแสดงผล
+                    renderCatalog();
+                    renderRecords();
                     setStatus('online');
                 } else { Swal.fire("ผิดพลาด", data.message || "โหลดข้อมูลไม่สำเร็จ", "error"); setStatus('error'); }
             } catch (e) { console.error(e); setStatus('error'); }

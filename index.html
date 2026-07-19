@@ -242,7 +242,6 @@
         </div>
     </div>
 
-    <!-- Modal เพิ่มรายชิ้น -->
     <div id="add-record-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[100] flex">
         <div class="bg-white rounded-2xl p-5 w-full max-w-lg relative shadow-2xl border-t-4 border-t-indigo-500 overflow-y-auto max-h-[90vh] custom-scrollbar">
             <button onclick="toggleAddRecordModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -295,21 +294,12 @@
                         </div>
                     </div>
                     <input type="text" id="rec-ref-doc" placeholder="เอกสารอ้างอิง (จัดซื้อชุดที่/ได้มาจาก)" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:border-indigo-400">
-                    
-                    <!-- ส่วนอัปโหลดรูปภาพ (ใหม่) -->
-                    <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100">
-                        <label class="text-xs font-bold text-indigo-700 block mb-1"><i class="fa-solid fa-camera"></i> อัปโหลดภาพครุภัณฑ์ (ถ้ามี)</label>
-                        <input type="file" id="rec-image" accept="image/*" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 transition">
-                        <img id="rec-image-preview" class="hidden mt-2 max-h-32 rounded-lg border border-slate-200 object-cover shadow-sm mx-auto" />
-                    </div>
-
                 </div>
-                <button type="submit" id="submit-record-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 mt-2 rounded-lg transition shadow-md">บันทึกรายชิ้น</button>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 mt-2 rounded-lg transition shadow-md">บันทึกรายชิ้น</button>
             </form>
         </div>
     </div>
 
-    <!-- Modal แก้ไขข้อมูล -->
     <div id="edit-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-[100] flex">
         <div class="bg-white rounded-2xl p-5 w-full max-w-lg relative shadow-2xl border-t-4 border-t-amber-400 overflow-y-auto max-h-[90vh] custom-scrollbar">
             <button onclick="toggleEditModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -379,15 +369,6 @@
                         <label class="text-[11px] font-bold text-slate-500">เอกสารอ้างอิง (จัดซื้อชุดที่/ได้มาจาก)</label>
                         <input type="text" id="edit-ref-doc" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg">
                     </div>
-
-                    <!-- ส่วนอัปเดตรูปภาพ (ใหม่) -->
-                    <div class="bg-amber-50 p-3 rounded-lg border border-amber-100">
-                        <label class="text-[11px] font-bold text-amber-700 block mb-1"><i class="fa-solid fa-camera"></i> อัปเดตภาพครุภัณฑ์ (เลือกไฟล์ใหม่เพื่อเปลี่ยน)</label>
-                        <input type="hidden" id="edit-existing-image">
-                        <input type="file" id="edit-image" accept="image/*" class="w-full text-sm text-slate-500 file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-amber-200 file:text-amber-800 hover:file:bg-amber-300 transition">
-                        <img id="edit-image-preview" class="hidden mt-2 max-h-32 rounded-lg border border-slate-200 object-cover shadow-sm mx-auto" />
-                    </div>
-
                 </div>
                 <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 mt-2 rounded-lg transition shadow-md" id="save-edit-btn">บันทึกการแก้ไข</button>
             </form>
@@ -436,61 +417,6 @@
         let unlockedRooms = new Set();
         const urlParams = new URLSearchParams(window.location.search);
         const CURRENT_VIEW = urlParams.get('view') || 'catalog'; 
-
-        // --- เพิ่มฟังก์ชันจัดการรูปภาพ ---
-        function compressImage(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = function (e) {
-                    const img = new Image();
-                    img.src = e.target.result;
-                    img.onload = function () {
-                        const canvas = document.createElement("canvas");
-                        const MAX_WIDTH = 800; const MAX_HEIGHT = 800;
-                        let width = img.width; let height = img.height;
-                        if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
-                        else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
-                        canvas.width = width; canvas.height = height;
-                        const ctx = canvas.getContext("2d");
-                        ctx.drawImage(img, 0, 0, width, height);
-                        resolve(canvas.toDataURL("image/jpeg", 0.7)); 
-                    };
-                    img.onerror = (err) => reject(err);
-                };
-                reader.onerror = (err) => reject(err);
-            });
-        }
-
-        document.getElementById('rec-image').addEventListener('change', async function(e) {
-            if(e.target.files[0]) {
-                const base64 = await compressImage(e.target.files[0]);
-                const preview = document.getElementById('rec-image-preview');
-                preview.src = base64; preview.classList.remove('hidden');
-            }
-        });
-
-        document.getElementById('edit-image').addEventListener('change', async function(e) {
-            if(e.target.files[0]) {
-                const base64 = await compressImage(e.target.files[0]);
-                const preview = document.getElementById('edit-image-preview');
-                preview.src = base64; preview.classList.remove('hidden');
-            }
-        });
-
-        function viewImage(url, itemName) {
-            Swal.fire({
-                imageUrl: url,
-                imageAlt: itemName,
-                imageWidth: 800,
-                imageHeight: 800,
-                width: 850,
-                showConfirmButton: true,
-                confirmButtonText: 'ปิดหน้าต่าง',
-                confirmButtonColor: '#4f46e5'
-            });
-        }
-        // ------------------------------------
 
         function navigatePage(view) {
             const url = new URL(window.location.href);
@@ -548,6 +474,7 @@
         function toggleAddRecordModal()  { document.getElementById("add-record-modal").classList.toggle("hidden"); }
         function toggleEditModal()       { document.getElementById("edit-modal").classList.toggle("hidden"); }
         
+        // --- ส่วนที่แก้ไข: เพิ่มระบบ Logout เมื่อกดปุ่มเดิม ---
         function toggleAdminModal() {
             if (STATE.isAdmin) {
                 Swal.fire({
@@ -577,6 +504,7 @@
             document.getElementById("admin-action-buttons").classList.add("hidden");
             Swal.fire("ออกจากระบบ", "กลับสู่โหมดผู้ใช้งานทั่วไปเรียบร้อย", "info");
         }
+        // ---------------------------------------------
 
         window.onload = () => { initDropdowns(); initView(); fetchDataFromSheet(); };
 
@@ -757,19 +685,26 @@
             pageList.forEach(c => {
                 const activeCount = STATE.records.filter(r => String(r['รหัสครุภัณฑ์หลัก']).trim() === String(c['รหัสครุภัณฑ์']).trim() && String(r['สถานะ']).trim() === 'ใช้งาน').length;
                 
+                // ตีกรอบ เพิ่มเงาให้สวยงาม
                 tb.innerHTML += `<tr class="block md:table-row bg-white md:hover:bg-slate-50 border border-slate-300 md:border-0 md:border-b md:border-slate-100 mb-5 md:mb-0 rounded-2xl md:rounded-none shadow-md md:shadow-none overflow-hidden transition">
+                    
                     <td class="block md:table-cell p-3 md:p-2.5 font-bold text-white md:text-slate-700 bg-blue-700 md:bg-transparent border-b md:border-none border-blue-800 align-middle">
                         <span class="md:hidden text-xs text-blue-200 font-normal mr-2">รหัสหลัก:</span>${esc(c['รหัสครุภัณฑ์'])}
                     </td>
+
                     <td class="block md:table-cell px-3 py-2 md:p-2.5 font-bold md:font-medium text-slate-900 text-base md:text-sm pt-3 md:pt-2.5 align-middle">
                         <span class="md:hidden text-xs text-slate-500 font-normal mr-2 inline-block w-[75px]">ชื่อครุภัณฑ์:</span>${esc(c['ชื่อครุภัณฑ์'])}
                     </td>
+
                     <td class="hidden md:table-cell p-2.5 text-slate-600 align-middle">${esc(c['ประเภทครุภัณฑ์']) || '-'}</td>
                     <td class="hidden md:table-cell p-2.5 text-center font-medium align-middle">${esc(c['อายุการใช้งาน'])} ปี</td>
+                    
                     <td class="block md:table-cell px-3 py-1.5 md:p-2.5 text-left md:text-center text-teal-600 font-bold align-middle">
                         <span class="md:hidden text-xs text-slate-500 font-normal mr-2 inline-block w-[75px]">คงเหลือ:</span>${activeCount} <span class="md:hidden text-slate-600 font-normal">${esc(c['หน่วยนับ']) || 'ชิ้น'}</span>
                     </td>
+
                     <td class="hidden md:table-cell p-2.5 text-slate-600 align-middle">${esc(c['หน่วยนับ']) || 'ชิ้น'}</td>
+                    
                     <td class="block md:table-cell p-2 md:p-2.5 text-center border-t md:border-t-0 border-slate-100 bg-slate-50 md:bg-transparent align-middle">
                         <button onclick="delCatalog('${esc(c['รหัสครุภัณฑ์'])}')" class="flex items-center justify-center gap-1.5 w-full md:w-auto text-red-600 hover:text-red-800 py-1.5 px-3 bg-white md:bg-red-50 border border-red-200 md:border-none rounded-lg transition font-bold text-[13.5px] shadow-sm md:shadow-none">
                             <i class="fa-solid fa-trash"></i><span class="md:hidden">ลบหมวดหมู่</span>
@@ -804,9 +739,9 @@
                 const parent = STATE.catalog.find(c => String(c['รหัสครุภัณฑ์']).trim() === String(r['รหัสครุภัณฑ์หลัก']).trim());
                 const parentCode = r['รหัสครุภัณฑ์หลัก']; const parentName = parent ? parent['ชื่อครุภัณฑ์'] : '-';
                 
+                // หัวการ์ดสีน้ำเงินสำหรับมือถือ
                 const parentDisplay = `<div><span class="font-bold text-blue-100 md:text-slate-700 text-[11px] md:text-xs">[${esc(parentCode)}]</span><br><span class="text-white md:text-slate-500 font-medium md:font-normal truncate md:max-w-[150px] block" title="${esc(parentName)}">${esc(parentName)}</span></div>`;
                 const itemName = r['ชื่อรายการ'] || parentName;
-                const safeItemName = (String(itemName)).replace(/'/g, "\\'"); // กันปัญหาเครื่องหมายคำพูดเวลาส่งชื่อไป Swal
 
                 let badgeClass = "bg-slate-200 text-slate-700"; const st = String(r['สถานะ']).trim();
                 if (st === 'ใช้งาน') badgeClass = "bg-green-100 text-green-700 border border-green-200";
@@ -817,13 +752,6 @@
                 const safeSerial   = displaySerial.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
                 const safeLocation = (String(r['สถานที่เก็บ'] || '')).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
                 const sellDateInfo = (st === 'จำหน่ายแล้ว' && r['วันที่จำหน่าย']) ? `<div class="text-[11px] text-red-600 font-bold mt-1">จำหน่าย: ${formatDateDisplay(r['วันที่จำหน่าย'])}</div>` : '';
-
-                // --- ปุ่มดูรูปภาพ ---
-                const imageUrl = r['URL รูปภาพ'];
-                let imageBtn = '';
-                if (imageUrl && imageUrl.trim() !== '') {
-                    imageBtn = `<button onclick="viewImage('${imageUrl}', '${safeItemName}')" class="ml-2 bg-indigo-100 text-indigo-600 hover:bg-indigo-200 hover:text-indigo-800 px-2 py-0.5 rounded-md text-xs font-bold transition shadow-sm" title="ดูรูปภาพ"><i class="fa-solid fa-image"></i> ดูรูป</button>`;
-                }
 
                 let checkColumnHTML = '';
                 if (st === 'จำหน่ายแล้ว') {
@@ -837,6 +765,7 @@
                         const displayStatus = isChecked ? 'ตรวจสอบแล้ว' : 'รอตรวจสอบ';
                         const checkColor = isChecked ? 'text-teal-600' : 'text-red-500';
                         
+                        // ขยายปุ่มตรวจสอบ (ครอบ Label ทำเป็นปุ่มใหญ่)
                         checkColumnHTML = `
                             <div class="flex flex-row md:flex-col items-center gap-3 md:gap-1.5">
                                 <label class="flex-1 md:flex-none flex items-center justify-center gap-2 cursor-pointer hover:bg-slate-50 transition-opacity bg-white md:bg-transparent px-3 py-2 md:p-0 rounded-xl md:rounded-none border border-slate-300 md:border-none shadow-sm md:shadow-none w-full md:w-auto">
@@ -851,32 +780,41 @@
                     }
                 }
 
+                // <tr> เพิ่มกรอบ เงา และระยะห่าง
                 tb.innerHTML += `<tr class="block md:table-row bg-white border border-slate-300 md:border-0 md:border-b md:border-slate-100 mb-6 md:mb-0 rounded-2xl md:rounded-none shadow-md md:shadow-none overflow-hidden transition">
                     
+                    <!-- หัวการ์ดสีน้ำเงิน -->
                     <td class="block md:table-cell p-3 md:p-2.5 align-middle bg-blue-700 md:bg-transparent border-b md:border-b-0 border-blue-800 md:border-transparent">
                         ${parentDisplay}
                     </td>
+
                     <td class="block md:table-cell px-3 py-1.5 md:p-2.5 font-bold text-indigo-900 whitespace-nowrap align-middle pt-3 md:pt-2.5">
                         <span class="md:hidden text-xs text-slate-500 font-normal mr-2 inline-block w-[75px]">เลขครุภัณฑ์:</span>
                         ${esc(displaySerial)}
                     </td>
+
                     <td class="block md:table-cell px-3 py-1.5 md:p-2.5 truncate md:max-w-[200px] align-middle font-medium text-slate-800" title="${esc(itemName)}">
                         <span class="md:hidden text-xs text-slate-500 font-normal mr-2 inline-block w-[75px]">ชื่อรายการ:</span>
-                        ${esc(itemName)} ${imageBtn}
+                        ${esc(itemName)}
                     </td>
+
                     <td class="block md:table-cell px-3 py-1.5 md:p-2.5 truncate md:max-w-[130px] align-middle text-slate-700">
                         <span class="md:hidden text-xs text-slate-500 font-normal mr-2 inline-block w-[75px]">สถานที่:</span>
                         ${esc(r['สถานที่เก็บ'])}
                     </td>
+
                     <td class="block md:table-cell px-3 py-1.5 md:p-2.5 text-left md:text-center align-middle">
                         <span class="md:hidden text-xs text-slate-500 font-normal mr-2 inline-block w-[75px]">สถานะ:</span>
                         <span class="px-2 py-1 text-[11px] rounded-md font-bold whitespace-nowrap ${badgeClass}">${esc(st)}</span>
                         <div class="inline-block md:block md:mt-1 ml-2 md:ml-0">${sellDateInfo}</div>
                     </td>
+
                     <td class="block md:table-cell p-3 md:p-2.5 text-left md:text-center align-middle md:border-l md:border-slate-100 print-hide bg-slate-50 md:bg-transparent mt-2 md:mt-0 border-t border-slate-100 md:border-t-0">
                         <span class="md:hidden text-sm text-slate-600 font-bold mr-2 mb-2 block">ผลการตรวจสอบ:</span>
                         <div class="inline-block md:flex md:justify-center align-middle w-full md:w-auto">${checkColumnHTML}</div>
                     </td>
+
+                    <!-- ย่อขนาดปุ่ม และจัดชิดขวา -->
                     <td class="block md:table-cell p-2 md:p-2.5 text-right md:text-center print-hide align-middle border-t border-slate-100 md:border-t-0 bg-slate-100/50 md:bg-transparent">
                         <div class="flex justify-end md:justify-center gap-1.5">
                             <button onclick="viewDepreciation('${safeSerial}')" class="flex items-center justify-center gap-1.5 text-blue-600 hover:text-blue-800 py-1.5 px-3 md:p-1.5 bg-white md:bg-blue-50 border border-blue-200 md:border-transparent rounded-lg transition shadow-sm md:shadow-none" title="คำนวณค่าเสื่อม">
@@ -947,35 +885,14 @@
             STATE.catalog.unshift(payload); FILTERED_CATALOG = [...STATE.catalog]; renderCatalog(); postData(payload); e.target.reset(); toggleAddCatalogModal(); Swal.fire("สำเร็จ", "เพิ่มสารบัญหลักเรียบร้อย", "success");
         }
 
-        // --- แก้ไขการส่งข้อมูล บันทึกรายการใหม่ ให้ส่งไฟล์ภาพไปด้วย ---
-        async function handleRecordSubmit(e) {
+        function handleRecordSubmit(e) {
             e.preventDefault();
             if (!STATE.isAdmin) return Swal.fire("แจ้งเตือน", "กรุณาล็อกอินก่อนบันทึกข้อมูล", "warning");
             const newSerial = document.getElementById("rec-serial").value.trim();
             if (STATE.records.some(r => String(r['เลขครุภัณฑ์']).trim() === newSerial)) { return Swal.fire("เลขครุภัณฑ์ซ้ำ!", `เลขครุภัณฑ์ [${newSerial}] ถูกใช้งานในระบบไปแล้ว`, "error"); }
-            
-            const btn = document.getElementById('submit-record-btn');
-            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังบันทึกและอัปโหลดรูป...';
-
-            let imageB64 = ''; let imageMime = '';
-            const fileInput = document.getElementById("rec-image");
-            if (fileInput.files.length > 0) {
-                imageB64 = await compressImage(fileInput.files[0]);
-                imageMime = fileInput.files[0].type;
-            }
-
-            const payload = { 
-                action: "addRecord", 'รหัสครุภัณฑ์หลัก': document.getElementById("rec-parent-select").value, 'วันที่ได้มา': document.getElementById("rec-date").value, 'ราคาต่อหน่วย': document.getElementById("rec-price").value, 'เลขครุภัณฑ์': newSerial, 'สถานที่เก็บ': document.getElementById("rec-location").value.trim(), 'สถานะ': document.getElementById("rec-status").value, 'ชื่อรายการ': document.getElementById("rec-name").value.trim(), 'ลักษณะขนาด': document.getElementById("rec-desc").value.trim(), 'รหัส GFMIS': document.getElementById("rec-gfmis").value.trim(), 'ประเภทเงิน': document.getElementById("rec-money-type").value, 'วิธีการที่ได้มา': document.getElementById("rec-method").value, 'เอกสารอ้างอิง': document.getElementById("rec-ref-doc").value.trim(), 'วันที่จำหน่าย': '', 'การตรวจสอบ': 'ตรวจสอบแล้ว',
-                imageB64: imageB64, imageMime: imageMime
-            };
-
-            STATE.records.unshift(payload); FILTERED_RECORDS = [...STATE.records]; renderRecords(); 
-            await postData(payload); 
-            e.target.reset(); 
-            document.getElementById('rec-image-preview').classList.add('hidden'); document.getElementById("rec-image").value = "";
-            const serialInput = document.getElementById("rec-serial"); serialInput.style.borderColor = ""; serialInput.style.boxShadow = ""; document.getElementById("serial-hint").textContent = ""; 
-            toggleAddRecordModal(); Swal.fire("สำเร็จ", "เพิ่มรายชิ้นเรียบร้อย", "success");
-            btn.disabled = false; btn.textContent = 'บันทึกรายชิ้น';
+            const payload = { action: "addRecord", 'รหัสครุภัณฑ์หลัก': document.getElementById("rec-parent-select").value, 'วันที่ได้มา': document.getElementById("rec-date").value, 'ราคาต่อหน่วย': document.getElementById("rec-price").value, 'เลขครุภัณฑ์': newSerial, 'สถานที่เก็บ': document.getElementById("rec-location").value.trim(), 'สถานะ': document.getElementById("rec-status").value, 'ชื่อรายการ': document.getElementById("rec-name").value.trim(), 'ลักษณะขนาด': document.getElementById("rec-desc").value.trim(), 'รหัส GFMIS': document.getElementById("rec-gfmis").value.trim(), 'ประเภทเงิน': document.getElementById("rec-money-type").value, 'วิธีการที่ได้มา': document.getElementById("rec-method").value, 'เอกสารอ้างอิง': document.getElementById("rec-ref-doc").value.trim(), 'วันที่จำหน่าย': '', 'การตรวจสอบ': 'ตรวจสอบแล้ว' };
+            STATE.records.unshift(payload); FILTERED_RECORDS = [...STATE.records]; renderRecords(); postData(payload); e.target.reset();
+            const serialInput = document.getElementById("rec-serial"); serialInput.style.borderColor = ""; serialInput.style.boxShadow = ""; document.getElementById("serial-hint").textContent = ""; toggleAddRecordModal(); Swal.fire("สำเร็จ", "เพิ่มรายชิ้นเรียบร้อย", "success");
         }
 
         function openEditModal(serial) {
@@ -990,42 +907,18 @@
             document.getElementById("edit-location").value = r['สถานที่เก็บ']; document.getElementById("edit-status").value = String(r['สถานะ']).trim();
             document.getElementById("edit-gfmis").value = r['รหัส GFMIS'] || ''; document.getElementById("edit-money-type").value = r['ประเภทเงิน'] || 'งบประมาณ';
             document.getElementById("edit-method").value = r['วิธีการที่ได้มา'] || 'ตกลงราคา'; document.getElementById("edit-ref-doc").value = r['เอกสารอ้างอิง'] || '';
-            
-            // --- โหลดข้อมูลภาพเก่ามาแสดงตอนเปิด Modal ---
-            document.getElementById("edit-existing-image").value = r['URL รูปภาพ'] || '';
-            const preview = document.getElementById('edit-image-preview');
-            if (r['URL รูปภาพ'] && r['URL รูปภาพ'].trim() !== '') {
-                preview.src = r['URL รูปภาพ']; preview.classList.remove('hidden');
-            } else { preview.classList.add('hidden'); preview.src = ''; }
-            document.getElementById("edit-image").value = "";
-
             if (r['วันที่จำหน่าย']) { try { const d2 = new Date(r['วันที่จำหน่าย']); document.getElementById("edit-disposal-date").value = d2.toISOString().split('T')[0]; } catch (e) { document.getElementById("edit-disposal-date").value = r['วันที่จำหน่าย']; } } else { document.getElementById("edit-disposal-date").value = ""; }
             handleEditStatusChange(); toggleEditModal();
         }
 
-        // --- แก้ไขการส่งข้อมูล บันทึกอัปเดต ให้ส่งไฟล์ภาพไปด้วย ---
-        async function submitEdit(e) {
+        function submitEdit(e) {
             e.preventDefault();
-            const btn = document.getElementById("save-edit-btn"); btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังบันทึกข้อมูล...';
+            const btn = document.getElementById("save-edit-btn"); btn.disabled = true; btn.textContent = "กำลังบันทึก...";
             const oldSerial = String(document.getElementById("edit-old-serial").value).trim(); const newSerial = String(document.getElementById("edit-serial").value).trim();
             if (newSerial !== oldSerial && STATE.records.some(r => String(r['เลขครุภัณฑ์']).trim() === newSerial)) { btn.disabled = false; btn.textContent = "บันทึกการแก้ไข"; return Swal.fire("เลขครุภัณฑ์ซ้ำ!", `ไม่สามารถเปลี่ยนเป็นเลข [${newSerial}] ได้`, "error"); }
-            
-            let imageB64 = ''; let imageMime = '';
-            const fileInput = document.getElementById("edit-image");
-            if (fileInput.files.length > 0) {
-                imageB64 = await compressImage(fileInput.files[0]);
-                imageMime = fileInput.files[0].type;
-            }
-            const existingImage = document.getElementById("edit-existing-image").value;
-
-            const payload = { 
-                action: "editRecord", oldSerial: oldSerial, 'รหัสครุภัณฑ์หลัก': document.getElementById("edit-parent").value, 'วันที่ได้มา': document.getElementById("edit-date").value, 'ราคาต่อหน่วย': document.getElementById("edit-price").value, 'เลขครุภัณฑ์': newSerial, 'สถานที่เก็บ': document.getElementById("edit-location").value.trim(), 'สถานะ': document.getElementById("edit-status").value, 'ชื่อรายการ': document.getElementById("edit-name").value.trim(), 'ลักษณะขนาด': document.getElementById("edit-desc").value.trim(), 'การตรวจสอบ': document.getElementById("edit-check-status").value, 'รหัส GFMIS': document.getElementById("edit-gfmis").value.trim(), 'ประเภทเงิน': document.getElementById("edit-money-type").value, 'วิธีการที่ได้มา': document.getElementById("edit-method").value, 'เอกสารอ้างอิง': document.getElementById("edit-ref-doc").value.trim(), 'วันที่จำหน่าย': document.getElementById("edit-disposal-date").value,
-                existingImageUrl: existingImage, imageB64: imageB64, imageMime: imageMime
-            };
+            const payload = { action: "editRecord", oldSerial: oldSerial, 'รหัสครุภัณฑ์หลัก': document.getElementById("edit-parent").value, 'วันที่ได้มา': document.getElementById("edit-date").value, 'ราคาต่อหน่วย': document.getElementById("edit-price").value, 'เลขครุภัณฑ์': newSerial, 'สถานที่เก็บ': document.getElementById("edit-location").value.trim(), 'สถานะ': document.getElementById("edit-status").value, 'ชื่อรายการ': document.getElementById("edit-name").value.trim(), 'ลักษณะขนาด': document.getElementById("edit-desc").value.trim(), 'การตรวจสอบ': document.getElementById("edit-check-status").value, 'รหัส GFMIS': document.getElementById("edit-gfmis").value.trim(), 'ประเภทเงิน': document.getElementById("edit-money-type").value, 'วิธีการที่ได้มา': document.getElementById("edit-method").value, 'เอกสารอ้างอิง': document.getElementById("edit-ref-doc").value.trim(), 'วันที่จำหน่าย': document.getElementById("edit-disposal-date").value };
             STATE.records = STATE.records.filter(x => String(x['เลขครุภัณฑ์']).trim() !== oldSerial); STATE.records.unshift(payload); FILTERED_RECORDS = [...STATE.records];
-            toggleEditModal(); renderRecords(); 
-            await postData(payload); 
-            Swal.fire("สำเร็จ", "แก้ไขข้อมูลเรียบร้อยแล้ว", "success"); setTimeout(() => { btn.disabled = false; btn.textContent = "บันทึกการแก้ไข"; }, 1000);
+            toggleEditModal(); renderRecords(); postData(payload); Swal.fire("สำเร็จ", "แก้ไขข้อมูลเรียบร้อยแล้ว", "success"); setTimeout(() => { btn.disabled = false; btn.textContent = "บันทึกการแก้ไข"; }, 1000);
         }
 
         function handleEditStatusChange() {
@@ -1119,12 +1012,11 @@
 
         function exportToExcel() {
             if (FILTERED_RECORDS.length === 0) return Swal.fire("แจ้งเตือน", "ไม่มีข้อมูลให้ส่งออก", "warning");
-            // อัปเดตเพิ่มหัวตาราง URL รูปภาพ
-            let csv = "\uFEFFรหัสครุภัณฑ์หลัก,วันที่ได้มา,เลขครุภัณฑ์,ชื่อรายการ,ลักษณะขนาด,ราคาต่อหน่วย,สถานที่เก็บ,สถานะ,วันที่จำหน่าย,ประเภทเงิน,วิธีการที่ได้มา,การตรวจสอบ,รหัส GFMIS,เอกสารอ้างอิง,URL รูปภาพ\n";
+            let csv = "\uFEFFรหัสครุภัณฑ์หลัก,วันที่ได้มา,เลขครุภัณฑ์,ชื่อรายการ,ลักษณะขนาด,ราคาต่อหน่วย,สถานที่เก็บ,สถานะ,วันที่จำหน่าย,ประเภทเงิน,วิธีการที่ได้มา,การตรวจสอบ,รหัส GFMIS,เอกสารอ้างอิง\n";
             FILTERED_RECORDS.forEach(r => {
                 const chkStatus = r['การตรวจสอบ'] ? String(r['การตรวจสอบ']).trim() : 'ตรวจสอบแล้ว';
                 let excelStatus = chkStatus === 'ไม่พบครุภัณฑ์' ? 'ไม่พบครุภัณฑ์' : ((chkStatus === 'ตรวจสอบแล้ว' || chkStatus === 'มี') ? 'ตรวจสอบแล้ว' : 'รอตรวจสอบ');
-                csv += `"${r['รหัสครุภัณฑ์หลัก']}","${formatDateDisplay(r['วันที่ได้มา'])}","${String(r['เลขครุภัณฑ์']).trim()}","${r['ชื่อรายการ'] || ''}","${r['ลักษณะขนาด'] || ''}","${r['ราคาต่อหน่วย']}","${r['สถานที่เก็บ']}","${r['สถานะ']}","${formatDateDisplay(r['วันที่จำหน่าย'])}","${r['ประเภทเงิน'] || ''}","${r['วิธีการที่ได้มา'] || ''}","${excelStatus}","${r['รหัส GFMIS'] || ''}","${r['เอกสารอ้างอิง'] || ''}","${r['URL รูปภาพ'] || ''}"\n`;
+                csv += `"${r['รหัสครุภัณฑ์หลัก']}","${formatDateDisplay(r['วันที่ได้มา'])}","${String(r['เลขครุภัณฑ์']).trim()}","${r['ชื่อรายการ'] || ''}","${r['ลักษณะขนาด'] || ''}","${r['ราคาต่อหน่วย']}","${r['สถานที่เก็บ']}","${r['สถานะ']}","${formatDateDisplay(r['วันที่จำหน่าย'])}","${r['ประเภทเงิน'] || ''}","${r['วิธีการที่ได้มา'] || ''}","${excelStatus}","${r['รหัส GFMIS'] || ''}","${r['เอกสารอ้างอิง'] || ''}"\n`;
             });
             const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" })); link.download = "ทะเบียนทรัพย์สินรายชิ้น.csv"; link.click();
         }
